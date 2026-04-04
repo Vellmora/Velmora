@@ -216,6 +216,8 @@
       align-items:center;justify-content:center;
       gap:16px;
       background:rgba(0,0,0,.5);
+      padding:20px;
+      text-align:center;
     }
     @keyframes spin{to{transform:rotate(360deg)}}
     .spinner{
@@ -229,7 +231,7 @@
     .fp-overlay-text{color:#cbd5e1;font-size:.95rem;font-weight:500;text-align:center;line-height:1.4;}
     .fp-overlay-sub{color:#94a3b8;font-size:.9rem;text-align:center;line-height:1.45;max-width:320px;}
 
-    .verify-row{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+    .verify-row{display:flex;align-items:center;gap:8px;flex-shrink:0;justify-content:center;position:relative;}
     .verify-btn{
       display:inline-flex;align-items:center;gap:10px;
       padding:15px 44px;
@@ -269,6 +271,7 @@
       white-space:nowrap;
       box-shadow:0 8px 24px rgba(0,0,0,.5);
       line-height:1.4;
+      max-width:min(280px,calc(100vw - 48px));
     }
     .info-tip::after{
       content:"";position:absolute;top:100%;left:50%;
@@ -286,6 +289,40 @@
     .player-controls span:last-child{margin-left:auto;cursor:pointer;color:#60a5fa;font-weight:600;}
     .player-controls span:last-child:hover{color:#93c5fd;}
 
+    .online-widget{
+      position:fixed;
+      left:16px;
+      bottom:16px;
+      z-index:2500;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(15,23,42,.92);
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:0 12px 30px rgba(0,0,0,.35);
+      color:#cbd5e1;
+      font-size:.85rem;
+      backdrop-filter:blur(10px);
+      opacity:0;
+      transform:translateY(12px);
+      transition:opacity .35s ease, transform .35s ease;
+      pointer-events:none;
+    }
+    .online-widget.show{
+      opacity:1;
+      transform:translateY(0);
+    }
+    .online-dot{
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background:#22c55e;
+      box-shadow:0 0 0 4px rgba(34,197,94,.18);
+      flex-shrink:0;
+    }
+
     .footer-text{text-align:center;padding:50px 20px 30px;color:#64748b;font-size:.85rem;line-height:1.6;}
 
     @media (max-width:780px){
@@ -298,12 +335,41 @@
       .movie-card{width:145px;}
       .search-result-card{flex-direction:column;}
       .search-result-poster{width:100%;height:260px;}
-      .modal-poster-row{flex-direction:column;align-items:center;text-align:center;}
-      .modal-poster-thumb{width:140px;}
-      .modal-text-col h2{font-size:1.5rem;}
-      .fp-center-play{width:64px;height:64px;}
-      .fp-center-play::after{border-top-width:13px;border-bottom-width:13px;border-left-width:22px;}
-      .verify-btn{padding:13px 32px;font-size:.95rem;}
+      .modal-overlay{align-items:center;padding:12px;}
+      .modal-content{width:min(94vw,420px);max-height:72vh;overflow-y:auto;border-radius:18px;}
+      .modal-backdrop{display:none;}
+      .modal-details{padding:14px;}
+      .modal-poster-row{flex-direction:row;align-items:flex-start;text-align:left;gap:12px;}
+      .modal-poster-thumb{width:76px;border-radius:12px;}
+      .modal-text-col h2{font-size:1.05rem;padding-right:34px;margin-bottom:8px;}
+      .modal-stats{gap:8px;font-size:.76rem;margin-bottom:8px;}
+      .modal-overview{font-size:.82rem;line-height:1.42;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;}
+      .modal-actions{gap:8px;}
+      .modal-actions button{padding:10px 14px;font-size:.82rem;}
+      .fp-center-play{width:58px;height:58px;}
+      .fp-center-play::after{border-top-width:11px;border-bottom-width:11px;border-left-width:18px;margin-left:3px;}
+      .fp-controls{
+        left:50%;
+        right:auto;
+        bottom:12px;
+        transform:translateX(-50%);
+        width:min(150px,62%);
+        padding:10px 12px;
+        border-radius:999px;
+        background:rgba(0,0,0,.72);
+        gap:0;
+      }
+      .fp-time{display:none;}
+      .fp-bar{height:3px;}
+      .verify-btn{padding:13px 28px;font-size:.95rem;}
+      .info-icon{width:20px;height:20px;font-size:.68rem;}
+      .info-tip{
+        white-space:normal;
+        width:min(220px,calc(100vw - 56px));
+        font-size:.7rem;
+        padding:8px 10px;
+      }
+      .online-widget{left:12px;bottom:12px;padding:9px 12px;font-size:.78rem;}
     }
   </style>
 </head>
@@ -320,6 +386,9 @@
     var infoOpen = false;
     var spinTimer = null;
     var humanTimer = null;
+    var onlineCount = 123;
+    var onlineCycleTimer = null;
+    var onlineHideTimer = null;
 
     var allMovies = [
       {
@@ -385,6 +454,29 @@
       if (humanTimer) { clearTimeout(humanTimer); humanTimer = null; }
     }
 
+    function scheduleOnlineVisitors() {
+      if (onlineCycleTimer) clearTimeout(onlineCycleTimer);
+      if (onlineHideTimer) clearTimeout(onlineHideTimer);
+
+      function cycle() {
+        onlineCount = Math.floor(108 + Math.random() * 96);
+        var widget = document.getElementById('onlineWidget');
+        var countNode = document.getElementById('onlineCount');
+
+        if (countNode) countNode.textContent = onlineCount;
+        if (widget) widget.classList.add('show');
+
+        onlineHideTimer = setTimeout(function() {
+          var currentWidget = document.getElementById('onlineWidget');
+          if (currentWidget) currentWidget.classList.remove('show');
+        }, 3800);
+
+        onlineCycleTimer = setTimeout(cycle, 7000 + Math.floor(Math.random() * 5000));
+      }
+
+      cycle();
+    }
+
     function setTab(tab) {
       clearTimers();
       currentTab = tab;
@@ -398,16 +490,38 @@
     }
 
     function handleCenterSearch(value) {
-      searchQuery = value.trim();
-      renderApp();
-      setTimeout(function() {
-        var input = document.getElementById('centerSearchInput');
-        if (input) { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }
-      }, 10);
+      searchQuery = value;
+      updateSearchResults();
     }
 
     function findMovieByNumber(num) {
-      return allMovies.find(function(m) { return m.number == parseInt(num); });
+      return allMovies.find(function(m) { return m.number == parseInt(num, 10); });
+    }
+
+
+    function getSearchResultsHTML() {
+      var query = searchQuery.trim();
+      var movie = query ? findMovieByNumber(query) : null;
+      if (!query) return '';
+      if (movie) {
+        return '<div class="search-result-container">' +
+          '<div class="search-result-card" onclick="showMovieByNumber(' + movie.number + ')">' +
+          '<div class="search-result-poster"><img src="' + movie.poster_path + '" alt="' + movie.title + '"></div>' +
+          '<div class="search-result-info">' +
+          '<span class="search-result-number">#' + movie.number + '</span>' +
+          '<h3 class="search-result-title">' + movie.title + '</h3>' +
+          '<div class="search-result-meta"><span>⭐ ' + movie.vote_average + '</span><span>' + movie.release_date + '</span></div>' +
+          '<p class="search-result-overview">' + movie.overview + '</p>' +
+          '</div></div></div>';
+      }
+      return '<div class="search-result-container"><div class="search-no-result">' +
+        '<h3>No movie found for #' + query + '</h3><p>Try another number (22–28)</p></div></div>';
+    }
+
+    function updateSearchResults() {
+      var results = document.getElementById('searchResults');
+      if (!results) return;
+      results.innerHTML = getSearchResultsHTML();
     }
 
     function showMovieByNumber(num) {
@@ -462,7 +576,6 @@
       renderApp();
     }
 
-    /* Stage 1: circle only for 5s */
     function clickFakePlay() {
       watchStage = 'spinning';
       infoOpen = false;
@@ -470,13 +583,11 @@
 
       spinTimer = setTimeout(function() {
         if (selectedItem && watchStage === 'spinning') {
-          /* Stage 2: circle + human text for 3s */
           watchStage = 'human';
           renderApp();
 
           humanTimer = setTimeout(function() {
             if (selectedItem && watchStage === 'human') {
-              /* Stage 3: everything + verify button */
               watchStage = 'verify';
               renderApp();
             }
@@ -503,30 +614,14 @@
     }
 
     function renderSearchPage() {
-      var movie = searchQuery ? findMovieByNumber(searchQuery) : null;
-      var resultHTML = '';
-      if (searchQuery) {
-        if (movie) {
-          resultHTML = '<div class="search-result-container">' +
-            '<div class="search-result-card" onclick="showMovieByNumber(' + movie.number + ')">' +
-            '<div class="search-result-poster"><img src="' + movie.poster_path + '" alt="' + movie.title + '"></div>' +
-            '<div class="search-result-info">' +
-            '<span class="search-result-number">#' + movie.number + '</span>' +
-            '<h3 class="search-result-title">' + movie.title + '</h3>' +
-            '<div class="search-result-meta"><span>⭐ ' + movie.vote_average + '</span><span>' + movie.release_date + '</span></div>' +
-            '<p class="search-result-overview">' + movie.overview + '</p>' +
-            '</div></div></div>';
-        } else {
-          resultHTML = '<div class="search-result-container"><div class="search-no-result">' +
-            '<h3>No movie found for #' + searchQuery + '</h3><p>Try another number (22–28)</p></div></div>';
-        }
-      }
       return '<div class="center-search-section">' +
         '<h2 class="center-search-title">Type a secret number…</h2>' +
         '<div class="center-search-box">' +
         '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 3a7.5 7.5 0 1 1 0 15a7.5 7.5 0 0 1 0-15Zm0 2a5.5 5.5 0 1 0 0 11a5.5 5.5 0 0 0 0-11Zm8.91 12.5l2.8 2.8l-1.41 1.41l-2.8-2.8l1.41-1.41Z"/></svg>' +
-        '<input type="text" id="centerSearchInput" placeholder="Type a number or movie title" value="' + searchQuery + '" oninput="handleCenterSearch(this.value)" autofocus>' +
-        '</div></div>' + resultHTML;
+        '<input type="text" inputmode="numeric" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="centerSearchInput" placeholder="Type a number or movie title" value="' + searchQuery.replace(/"/g, '&quot;') + '">' +
+        '</div>' +
+        '<div id="searchResults">' + getSearchResultsHTML() + '</div>' +
+        '</div>';
     }
 
     function renderMovieCard(item) {
@@ -633,6 +728,22 @@
         '<span onclick="closeVideo()">Close ✕</span></div></div></div>';
     }
 
+    function attachSearchInputEvents() {
+      var input = document.getElementById('centerSearchInput');
+      if (!input || input.dataset.bound === 'true') return;
+      input.dataset.bound = 'true';
+
+      input.addEventListener('input', function(e) {
+        searchQuery = e.target.value;
+        updateSearchResults();
+      });
+
+      input.addEventListener('focus', function() {
+        var len = input.value.length;
+        input.setSelectionRange(len, len);
+      });
+    }
+
     function renderApp() {
       var mainContent = '';
       if (currentTab === 'search') mainContent = renderSearchPage();
@@ -653,7 +764,10 @@
         '</div></div></nav>' +
         '<main class="container">' + mainContent + '</main>' +
         renderModal() + renderVideoPlayer() +
+        '<div class="online-widget" id="onlineWidget"><span class="online-dot"></span><span>Online now <strong id="onlineCount">' + onlineCount + '</strong></span></div>' +
         '<footer><div class="container"><div class="footer-text">© 2026 Velmora<br>All rights reserved.</div></div></footer>';
+
+      attachSearchInputEvents();
     }
 
     window.setTab = setTab;
@@ -670,6 +784,7 @@
     window.clickVerify = clickVerify;
 
     renderApp();
+    scheduleOnlineVisitors();
   </script>
 </body>
 </html>
