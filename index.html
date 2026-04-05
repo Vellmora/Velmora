@@ -27,10 +27,49 @@
       overflow-x: hidden;
     }
 
+    /* ---- FLOATING PARTICLES ---- */
+    .particles-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.35;
+    }
+
+    /* ---- SHIMMER LINES ---- */
+    @keyframes shimmerLine {
+      0% { transform: translateX(-100%) skewX(-20deg); }
+      100% { transform: translateX(400%) skewX(-20deg); }
+    }
+
+    /* ---- FLOATING ORBS (CSS only) ---- */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(80px);
+      opacity: 0.08;
+      animation: orbFloat linear infinite;
+    }
+    .orb1 { width: 320px; height: 320px; background: #2563eb; top: 10%; left: -5%; animation-duration: 18s; }
+    .orb2 { width: 260px; height: 260px; background: #ef4444; top: 60%; right: -4%; animation-duration: 22s; animation-delay: -8s; }
+    .orb3 { width: 200px; height: 200px; background: #7c3aed; top: 35%; left: 45%; animation-duration: 28s; animation-delay: -14s; }
+
+    @keyframes orbFloat {
+      0%   { transform: translateY(0px) scale(1); }
+      33%  { transform: translateY(-40px) scale(1.05); }
+      66%  { transform: translateY(20px) scale(0.97); }
+      100% { transform: translateY(0px) scale(1); }
+    }
+
     .container {
       max-width: 1450px;
       margin: auto;
       padding: 0 22px;
+      position: relative;
+      z-index: 1;
     }
 
     .navbar {
@@ -59,33 +98,34 @@
       font-size: 2rem;
       font-weight: 800;
       cursor: pointer;
+      animation: fadeInDown 0.5s ease both;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-14px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     .logo-mark {
-      width: 48px;
-      height: 48px;
+      width: 48px; height: 48px;
       border-radius: 14px;
       background: linear-gradient(145deg, #111827, #1d4ed8 55%, #b91c1c);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255,255,255,0.12);
       position: relative;
-      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.3);
+      box-shadow: 0 10px 24px rgba(37,99,235,0.3);
     }
-
     .logo-mark::before {
       content: "";
       position: absolute;
       inset: 8px;
       border-radius: 10px;
-      border: 2px solid rgba(255, 255, 255, 0.8);
+      border: 2px solid rgba(255,255,255,0.8);
     }
-
     .logo-mark::after {
       content: "";
       position: absolute;
-      top: 15px;
-      left: 19px;
-      width: 0;
-      height: 0;
+      top: 15px; left: 19px;
+      width: 0; height: 0;
       border-left: 13px solid #fff;
       border-top: 8px solid transparent;
       border-bottom: 8px solid transparent;
@@ -101,33 +141,58 @@
       display: flex;
       gap: 22px;
       flex-wrap: wrap;
+      animation: fadeInDown 0.5s 0.1s ease both;
     }
-
     .nav-links a {
       color: #dbeafe;
       text-decoration: none;
       font-weight: 500;
       cursor: pointer;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: #60a5fa; }
+
+    /* ---- SEARCH PAGE ---- */
+    .search-page-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 36px;      /* was centered, now pushed up */
+      padding-bottom: 30px;
+      width: 100%;
+      min-height: calc(100vh - 78px - 80px);
     }
 
-    .nav-links a:hover {
-      color: #60a5fa;
+    .search-hero-text {
+      text-align: center;
+      margin-bottom: 28px;
+      animation: fadeInUp 0.6s ease both;
+    }
+    .search-hero-text h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      background: linear-gradient(90deg, #fff 40%, #60a5fa 70%, #ef4444);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .search-hero-text p {
+      color: #64748b;
+      font-size: 0.95rem;
     }
 
-    /* search section - reduced empty space */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
     .center-search-section {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 20px 20px 10px 20px;
-      text-align: center;
-    }
-
-    .center-search-title {
-      font-size: 1.4rem;
-      color: #e2e8f0;
-      margin-bottom: 20px;
-      font-weight: 600;
+      width: 100%;
+      padding: 0 20px;
+      animation: fadeInUp 0.6s 0.1s ease both;
     }
 
     .center-search-box {
@@ -142,8 +207,22 @@
       max-width: 720px;
       transition: all 0.3s;
       box-shadow: 0 12px 48px rgba(37, 99, 235, 0.25);
+      position: relative;
+      overflow: hidden;
     }
 
+    /* shimmer on focus */
+    .center-search-box::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 40%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(96,165,250,0.08), transparent);
+      transform: translateX(-100%) skewX(-20deg);
+    }
+    .center-search-box:focus-within::after {
+      animation: shimmerLine 1.6s ease infinite;
+    }
     .center-search-box:focus-within {
       border-color: #3b82f6;
       box-shadow: 0 12px 60px rgba(37, 99, 235, 0.4);
@@ -151,12 +230,10 @@
     }
 
     .center-search-box svg {
-      width: 28px;
-      height: 28px;
+      width: 28px; height: 28px;
       fill: #60a5fa;
       flex-shrink: 0;
     }
-
     .center-search-box input {
       background: transparent;
       border: none;
@@ -166,18 +243,16 @@
       font-size: 1.3rem;
       font-family: inherit;
     }
-
-    .center-search-box input::placeholder {
-      color: #64748b;
-    }
+    .center-search-box input::placeholder { color: #64748b; }
 
     .search-result-container {
       padding: 16px 16px 30px 16px;
       max-width: 900px;
+      width: 100%;
       margin: 0 auto;
+      animation: fadeInUp 0.4s ease both;
     }
 
-    /* movie card after search - compact, poster smaller, no extra gap */
     .search-result-card {
       display: flex;
       gap: 14px;
@@ -189,83 +264,37 @@
       transition: all 0.3s;
       margin-top: 8px;
     }
-
     .search-result-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.5);
       border-color: #3b82f6;
     }
 
-    .search-result-poster {
-      width: 110px;
-      flex-shrink: 0;
-    }
+    .search-result-poster { width: 110px; flex-shrink: 0; }
+    .search-result-poster img { width: 100%; height: 100%; object-fit: cover; display: block; aspect-ratio: 2/3; }
 
-    .search-result-poster img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      aspect-ratio: 2/3;
-    }
-
-    .search-result-info {
-      padding: 10px 14px 10px 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
+    .search-result-info { padding: 10px 14px 10px 0; display: flex; flex-direction: column; justify-content: center; }
     .search-result-number {
       display: inline-block;
       background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      color: #fff;
-      font-weight: 700;
-      font-size: 0.7rem;
-      padding: 2px 10px;
-      border-radius: 999px;
-      margin-bottom: 6px;
-      width: fit-content;
+      color: #fff; font-weight: 700; font-size: 0.7rem;
+      padding: 2px 10px; border-radius: 999px;
+      margin-bottom: 6px; width: fit-content;
     }
+    .search-result-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 4px; line-height: 1.2; }
+    .search-result-meta { display: flex; gap: 10px; color: #94a3b8; font-size: 0.75rem; margin-bottom: 8px; }
+    .search-result-overview { color: #cbd5e1; font-size: 0.8rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .search-no-result { text-align: center; padding: 20px; color: #94a3b8; }
+    .search-no-result h3 { font-size: 1.2rem; margin-bottom: 6px; color: #fff; }
 
-    .search-result-title {
-      font-size: 1.2rem;
-      font-weight: 700;
-      margin-bottom: 4px;
-      line-height: 1.2;
-    }
-
-    .search-result-meta {
-      display: flex;
+    /* multiple results */
+    .multi-results-grid {
+      display: grid;
+      grid-template-columns: 1fr;
       gap: 10px;
-      color: #94a3b8;
-      font-size: 0.75rem;
-      margin-bottom: 8px;
     }
 
-    .search-result-overview {
-      color: #cbd5e1;
-      font-size: 0.8rem;
-      line-height: 1.4;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .search-no-result {
-      text-align: center;
-      padding: 20px;
-      color: #94a3b8;
-    }
-
-    .search-no-result h3 {
-      font-size: 1.2rem;
-      margin-bottom: 6px;
-      color: #fff;
-    }
-
-    /* hero & cards */
+    /* ---- HOME / CARDS ---- */
     .hero {
       min-height: 66vh;
       border-radius: 0 0 26px 26px;
@@ -274,964 +303,286 @@
       margin-bottom: 28px;
       background-size: cover;
       background-position: center;
+      animation: fadeInUp 0.7s ease both;
     }
-
     .hero::before {
       content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, rgba(2, 6, 23, 0.96) 12%, rgba(2, 6, 23, 0.58) 48%, rgba(2, 6, 23, 0.18) 100%),
-        linear-gradient(to top, rgba(2, 6, 23, 1), rgba(2, 6, 23, 0.12));
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, rgba(2,6,23,0.96) 12%, rgba(2,6,23,0.58) 48%, rgba(2,6,23,0.18) 100%),
+        linear-gradient(to top, rgba(2,6,23,1), rgba(2,6,23,0.12));
     }
-
     .hero-content {
       position: absolute;
-      left: 5%;
-      bottom: 12%;
-      max-width: 620px;
-      z-index: 2;
+      left: 5%; bottom: 12%;
+      max-width: 620px; z-index: 2;
     }
 
     .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
-      border-radius: 999px;
-      background: rgba(59, 130, 246, 0.15);
-      border: 1px solid rgba(96, 165, 250, 0.25);
-      color: #bfdbfe;
-      font-size: 0.85rem;
-      font-weight: 600;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 14px; border-radius: 999px;
+      background: rgba(59,130,246,0.15);
+      border: 1px solid rgba(96,165,250,0.25);
+      color: #bfdbfe; font-size: 0.85rem; font-weight: 600;
       margin-bottom: 14px;
     }
 
-    .hero h1 {
-      font-size: 3rem;
-      line-height: 1.05;
-      margin-bottom: 14px;
-    }
-
-    .hero p {
-      color: #cbd5e1;
-      line-height: 1.6;
-      margin-bottom: 18px;
-    }
-
-    .hero-meta {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      color: #cbd5e1;
-      margin-bottom: 22px;
-    }
-
-    .hero-buttons {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
+    .hero h1 { font-size: 3rem; line-height: 1.05; margin-bottom: 14px; }
+    .hero p { color: #cbd5e1; line-height: 1.6; margin-bottom: 18px; }
+    .hero-meta { display: flex; gap: 12px; flex-wrap: wrap; color: #cbd5e1; margin-bottom: 22px; }
+    .hero-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
 
     button {
-      border: none;
-      cursor: pointer;
-      border-radius: 999px;
-      padding: 13px 22px;
-      font-weight: 700;
-      font-family: inherit;
-      font-size: 0.95rem;
-      transition: all 0.2s;
+      border: none; cursor: pointer; border-radius: 999px;
+      padding: 13px 22px; font-weight: 700; font-family: inherit;
+      font-size: 0.95rem; transition: all 0.2s;
     }
+    button:hover { transform: translateY(-1px); }
+    .btn-primary { background: linear-gradient(90deg, #2563eb, #1d4ed8); color: #fff; }
+    .btn-secondary { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.12); }
+    .btn-watch { background: linear-gradient(90deg, #ef4444, #b91c1c); color: #fff; box-shadow: 0 10px 22px rgba(239,68,68,0.22); font-size: 1rem; padding: 14px 28px; }
 
-    button:hover {
-      transform: translateY(-1px);
-    }
+    .section { margin: 36px 0; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 0 4px; }
+    .section-header h2 { font-size: 1.45rem; }
 
-    .btn-primary {
-      background: linear-gradient(90deg, #2563eb, #1d4ed8);
-      color: #fff;
-    }
+    .scroll-row { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 10px; scroll-behavior: smooth; }
+    .scroll-row::-webkit-scrollbar { height: 8px; }
+    .scroll-row::-webkit-scrollbar-thumb { background: #2563eb; border-radius: 999px; }
 
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-    }
-
-    .btn-watch {
-      background: linear-gradient(90deg, #ef4444, #b91c1c);
-      color: #fff;
-      box-shadow: 0 10px 22px rgba(239, 68, 68, 0.22);
-      font-size: 1rem;
-      padding: 14px 28px;
-    }
-
-    .section {
-      margin: 36px 0;
-    }
-
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      padding: 0 4px;
-    }
-
-    .section-header h2 {
-      font-size: 1.45rem;
-    }
-
-    .scroll-row {
-      display: flex;
-      gap: 16px;
-      overflow-x: auto;
-      padding-bottom: 10px;
-      scroll-behavior: smooth;
-    }
-
-    .scroll-row::-webkit-scrollbar {
-      height: 8px;
-    }
-
-    .scroll-row::-webkit-scrollbar-thumb {
-      background: #2563eb;
-      border-radius: 999px;
-    }
-
-    .grid-layout {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 18px;
-    }
+    .grid-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 18px; }
 
     .movie-card {
-      flex: 0 0 auto;
-      width: 180px;
+      flex: 0 0 auto; width: 180px;
       background: linear-gradient(to bottom, #0f172a, #0b1220);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px; overflow: hidden;
+      cursor: pointer; transition: 0.25s;
+    }
+    .movie-card:hover { transform: translateY(-6px); box-shadow: 0 18px 30px rgba(0,0,0,0.45); }
+
+    /* card entrance animation */
+    .movie-card { animation: cardPop 0.4s ease both; }
+    @keyframes cardPop {
+      from { opacity: 0; transform: translateY(16px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .card-poster { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block; background: #111827; }
+    .card-info { padding: 12px 10px 14px; }
+    .card-title { font-size: 0.92rem; font-weight: 600; line-height: 1.35; min-height: 40px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .card-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; font-size: 0.74rem; color: #94a3b8; }
+
+    /* ---- MODAL ---- */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.94); backdrop-filter: blur(10px); z-index: 3000; display: flex; justify-content: center; align-items: center; padding: 18px; animation: fadeIn 0.2s ease both; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .modal-content { width: 100%; max-width: 880px; max-height: 85vh; overflow-y: auto; background: #0b1220; border: 1px solid rgba(96,165,250,0.2); border-radius: 24px; position: relative; animation: slideUp 0.3s ease both; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .modal-content::-webkit-scrollbar { width: 4px; }
+    .modal-content::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
+
+    .close-modal { position: absolute; top: 12px; right: 12px; z-index: 10; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; color: #fff; }
+
+    .modal-backdrop { min-height: 140px; background-size: cover; background-position: center; position: relative; background-color: #0f172a; }
+    .modal-backdrop::before { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(11,18,32,1), rgba(11,18,32,0.3)); }
+
+    .modal-details { padding: 20px 24px 24px; }
+    .modal-poster-row { display: flex; gap: 20px; align-items: flex-start; }
+    .modal-poster-thumb { width: 130px; flex-shrink: 0; border-radius: 14px; object-fit: cover; box-shadow: 0 8px 20px rgba(0,0,0,0.5); background: #111827; aspect-ratio: 2/3; }
+    .modal-text-col { flex: 1; min-width: 0; }
+    .modal-text-col h2 { font-size: 1.6rem; margin-bottom: 8px; line-height: 1.2; }
+    .modal-stats { display: flex; gap: 12px; flex-wrap: wrap; color: #cbd5e1; margin-bottom: 12px; font-size: 0.85rem; }
+    .modal-overview { color: #94a3b8; line-height: 1.5; margin-bottom: 18px; font-size: 0.9rem; max-height: 120px; overflow-y: auto; padding-right: 6px; }
+    .modal-overview::-webkit-scrollbar { width: 3px; }
+    .modal-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* fake player */
+    .fake-player { position: relative; aspect-ratio: 16/9; background: #000; overflow: hidden; }
+    .fp-bg { width: 100%; height: 100%; object-fit: cover; opacity: 0.25; filter: blur(2px); position: absolute; top: 0; left: 0; }
+    .fp-watermark { position: absolute; top: 18px; left: 20px; font-size: 0.7rem; font-weight: 800; color: rgba(255,255,255,0.18); letter-spacing: 3px; text-transform: uppercase; z-index: 2; }
+    .fp-center-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); z-index: 3; width: 70px; height: 70px; background: rgba(0,0,0,0.55); border: 2px solid rgba(255,255,255,0.25); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; }
+    .fp-center-play:hover { transform: translate(-50%,-50%) scale(1.1); }
+    .fp-center-play::after { content: ""; width: 0; height: 0; border-top: 14px solid transparent; border-bottom: 14px solid transparent; border-left: 22px solid #fff; margin-left: 5px; }
+    .fp-controls { position: absolute; bottom: 0; left: 0; right: 0; z-index: 2; padding: 30px 18px 12px; background: linear-gradient(transparent, rgba(0,0,0,0.85)); display: flex; align-items: center; gap: 10px; }
+    .fp-time { color: rgba(255,255,255,0.6); font-size: 0.7rem; }
+    .fp-bar { flex: 1; height: 3px; background: rgba(255,255,255,0.15); border-radius: 2px; overflow: hidden; }
+    .fp-bar-fill { width: 0%; height: 100%; background: #ef4444; }
+    .fp-overlay { position: absolute; inset: 0; z-index: 4; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: rgba(0,0,0,0.5); }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { width: 42px; height: 42px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #3b82f6; border-radius: 50%; animation: spin 0.8s linear infinite; }
+
+    .fp-overlay-text { color: #cbd5e1; font-size: 0.85rem; font-weight: 500; }
+    .fp-overlay-sub { color: #94a3b8; font-size: 0.8rem; text-align: center; }
+
+    .verify-row { display: flex; align-items: center; gap: 8px; }
+    .verify-btn { padding: 10px 32px; background: linear-gradient(90deg, #2563eb, #1d4ed8); color: #fff; font-size: 0.9rem; font-weight: 700; border-radius: 999px; cursor: pointer; }
+    .info-icon { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #64748b; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; position: relative; font-size: 0.7rem; }
+    .info-tip { display: none; position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: #1e293b; color: #94a3b8; font-size: 0.7rem; padding: 6px 12px; border-radius: 8px; white-space: nowrap; }
+    .info-icon.active .info-tip { display: block; }
+
+    .video-player-container { width: 100%; max-width: 900px; background: #000; border-radius: 16px; overflow: hidden; }
+    .video-player-container iframe { width: 100%; aspect-ratio: 16/9; display: block; border: none; }
+    .player-controls { display: flex; align-items: center; padding: 12px 18px; background: #0f172a; color: #94a3b8; font-size: 0.85rem; }
+    .player-controls span:last-child { margin-left: auto; cursor: pointer; color: #60a5fa; }
+
+    .footer-text { text-align: center; padding: 40px 20px 30px; color: #64748b; font-size: 0.8rem; }
+
+    main { min-height: calc(100vh - 78px - 80px); position: relative; z-index: 1; }
+    footer { position: relative; z-index: 1; }
+
+    /* fake visitors */
+    .online-visitors { position: fixed; bottom: 18px; left: 18px; background: rgba(0,0,0,0.7); backdrop-filter: blur(12px); padding: 6px 14px; border-radius: 40px; font-size: 0.8rem; font-weight: 500; display: flex; align-items: center; gap: 8px; z-index: 2500; border: 1px solid rgba(34,197,94,0.4); pointer-events: none; font-family: monospace; }
+    .online-dot { width: 9px; height: 9px; background-color: #22c55e; border-radius: 50%; box-shadow: 0 0 5px #22c55e; animation: pulse 1.8s infinite; }
+    @keyframes pulse { 0% { opacity: 0.5; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1.2); } }
+    .online-count { color: #e2e8f0; }
+
+    /* ---- TICKER / MARQUEE ---- */
+    .marquee-wrapper {
       overflow: hidden;
-      cursor: pointer;
-      transition: 0.25s;
-    }
-
-    .movie-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 18px 30px rgba(0, 0, 0, 0.45);
-    }
-
-    .card-poster {
       width: 100%;
-      aspect-ratio: 2/3;
-      object-fit: cover;
-      display: block;
-      background: #111827;
+      background: rgba(37,99,235,0.07);
+      border-top: 1px solid rgba(96,165,250,0.1);
+      border-bottom: 1px solid rgba(96,165,250,0.1);
+      padding: 8px 0;
+      margin-bottom: 2px;
     }
-
-    .card-info {
-      padding: 12px 10px 14px;
-    }
-
-    .card-title {
-      font-size: 0.92rem;
-      font-weight: 600;
-      line-height: 1.35;
-      min-height: 40px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .card-meta {
+    .marquee-track {
       display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 8px;
-      font-size: 0.74rem;
-      color: #94a3b8;
-    }
-
-    /* MODAL - compact */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.94);
-      backdrop-filter: blur(10px);
-      z-index: 3000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 18px;
-    }
-
-    .modal-content {
-      width: 100%;
-      max-width: 880px;
-      max-height: 85vh;
-      overflow-y: auto;
-      background: #0b1220;
-      border: 1px solid rgba(96, 165, 250, 0.2);
-      border-radius: 24px;
-      position: relative;
-    }
-
-    .modal-content::-webkit-scrollbar {
-      width: 4px;
-    }
-
-    .modal-content::-webkit-scrollbar-thumb {
-      background: #3b82f6;
-      border-radius: 10px;
-    }
-
-    .close-modal {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      z-index: 10;
-      background: rgba(0, 0, 0, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 20px;
-      color: #fff;
-    }
-
-    .modal-backdrop {
-      min-height: 140px;
-      background-size: cover;
-      background-position: center;
-      position: relative;
-      background-color: #0f172a;
-    }
-
-    .modal-backdrop::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(11, 18, 32, 1), rgba(11, 18, 32, 0.3));
-    }
-
-    .modal-details {
-      padding: 20px 24px 24px;
-    }
-
-    .modal-poster-row {
-      display: flex;
-      gap: 20px;
-      align-items: flex-start;
-    }
-
-    .modal-poster-thumb {
-      width: 130px;
-      flex-shrink: 0;
-      border-radius: 14px;
-      object-fit: cover;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-      background: #111827;
-      aspect-ratio: 2/3;
-    }
-
-    .modal-text-col {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .modal-text-col h2 {
-      font-size: 1.6rem;
-      margin-bottom: 8px;
-      line-height: 1.2;
-    }
-
-    .modal-stats {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      color: #cbd5e1;
-      margin-bottom: 12px;
-      font-size: 0.85rem;
-    }
-
-    .modal-overview {
-      color: #94a3b8;
-      line-height: 1.5;
-      margin-bottom: 18px;
-      font-size: 0.9rem;
-      max-height: 120px;
-      overflow-y: auto;
-      padding-right: 6px;
-    }
-
-    .modal-overview::-webkit-scrollbar {
-      width: 3px;
-    }
-
-    .modal-actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    /* fake player & verification */
-    .fake-player {
-      position: relative;
-      aspect-ratio: 16/9;
-      background: #000;
-      overflow: hidden;
-    }
-
-    .fp-bg {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0.25;
-      filter: blur(2px);
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-
-    .fp-watermark {
-      position: absolute;
-      top: 18px;
-      left: 20px;
-      font-size: 0.7rem;
-      font-weight: 800;
-      color: rgba(255, 255, 255, 0.18);
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      z-index: 2;
-    }
-
-    .fp-center-play {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 3;
-      width: 70px;
-      height: 70px;
-      background: rgba(0, 0, 0, 0.55);
-      border: 2px solid rgba(255, 255, 255, 0.25);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-
-    .fp-center-play::after {
-      content: "";
-      width: 0;
-      height: 0;
-      border-top: 14px solid transparent;
-      border-bottom: 14px solid transparent;
-      border-left: 22px solid #fff;
-      margin-left: 5px;
-    }
-
-    .fp-controls {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 2;
-      padding: 30px 18px 12px;
-      background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .fp-time {
-      color: rgba(255, 255, 255, 0.6);
-      font-size: 0.7rem;
-    }
-
-    .fp-bar {
-      flex: 1;
-      height: 3px;
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .fp-bar-fill {
-      width: 0%;
-      height: 100%;
-      background: #ef4444;
-    }
-
-    .fp-overlay {
-      position: absolute;
-      inset: 0;
-      z-index: 4;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      background: rgba(0, 0, 0, 0.5);
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .spinner {
-      width: 42px;
-      height: 42px;
-      border: 3px solid rgba(255, 255, 255, 0.1);
-      border-top-color: #3b82f6;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    .fp-overlay-text {
-      color: #cbd5e1;
-      font-size: 0.85rem;
-      font-weight: 500;
-    }
-
-    .fp-overlay-sub {
-      color: #94a3b8;
-      font-size: 0.8rem;
-      text-align: center;
-    }
-
-    .verify-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .verify-btn {
-      padding: 10px 32px;
-      background: linear-gradient(90deg, #2563eb, #1d4ed8);
-      color: #fff;
-      font-size: 0.9rem;
-      font-weight: 700;
-      border-radius: 999px;
-      cursor: pointer;
-    }
-
-    .info-icon {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      border: 1.5px solid #64748b;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      position: relative;
-      font-size: 0.7rem;
-    }
-
-    .info-tip {
-      display: none;
-      position: absolute;
-      bottom: calc(100% + 8px);
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1e293b;
-      color: #94a3b8;
-      font-size: 0.7rem;
-      padding: 6px 12px;
-      border-radius: 8px;
+      gap: 60px;
       white-space: nowrap;
+      animation: marqueeScroll 28s linear infinite;
     }
-
-    .info-icon.active .info-tip {
-      display: block;
+    .marquee-track:hover { animation-play-state: paused; }
+    @keyframes marqueeScroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
     }
-
-    .video-player-container {
-      width: 100%;
-      max-width: 900px;
-      background: #000;
-      border-radius: 16px;
-      overflow: hidden;
-    }
-
-    .video-player-container iframe {
-      width: 100%;
-      aspect-ratio: 16/9;
-      display: block;
-      border: none;
-    }
-
-    .player-controls {
-      display: flex;
-      align-items: center;
-      padding: 12px 18px;
-      background: #0f172a;
-      color: #94a3b8;
-      font-size: 0.85rem;
-    }
-
-    .player-controls span:last-child {
-      margin-left: auto;
-      cursor: pointer;
+    .marquee-item {
+      font-size: 0.78rem;
       color: #60a5fa;
-    }
-
-    .footer-text {
-      text-align: center;
-      padding: 40px 20px 30px;
-      color: #64748b;
-      font-size: 0.8rem;
-    }
-
-    /* Search page wrapper - centers content vertically */
-    .search-page-wrapper {
-      min-height: calc(100vh - 78px - 80px);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 20px 0;
-      width: 100%;
-    }
-
-    @media (max-width: 768px) {
-      .search-page-wrapper {
-        min-height: calc(100vh - 64px - 60px);
-        padding: 16px 0;
-      }
-    }
-
-    /* Main content area */
-    main {
-      min-height: calc(100vh - 78px - 80px);
-    }
-
-    @media (max-width: 768px) {
-      main {
-        min-height: calc(100vh - 64px - 60px);
-      }
-    }
-
-    /* Footer always at bottom */
-    footer {
-      margin-top: auto;
-    }
-
-    /* Mobile-first responsive design */
-    @media (max-width: 768px) {
-      .container {
-        padding: 0 12px;
-      }
-
-      .nav-inner {
-        min-height: 64px;
-        padding: 8px 0;
-      }
-
-      .logo {
-        font-size: 1.5rem;
-        gap: 10px;
-      }
-
-      .logo-mark {
-        width: 38px;
-        height: 38px;
-        border-radius: 10px;
-      }
-
-      .logo-mark::before {
-        inset: 6px;
-        border-radius: 6px;
-      }
-
-      .logo-mark::after {
-        top: 12px;
-        left: 15px;
-        border-left: 10px solid #fff;
-        border-top: 6px solid transparent;
-        border-bottom: 6px solid transparent;
-      }
-
-      .nav-links {
-        gap: 12px;
-        font-size: 0.85rem;
-      }
-
-      .nav-links a {
-        padding: 4px 8px;
-      }
-
-      .center-search-section {
-        padding: 20px 12px;
-        min-height: calc(100vh - 64px - 60px);
-        justify-content: center;
-      }
-
-      .center-search-title {
-        font-size: 1.1rem;
-        margin-bottom: 16px;
-      }
-
-      .center-search-box {
-        padding: 12px 16px;
-        max-width: 100%;
-        border-width: 2px;
-      }
-
-      .center-search-box svg {
-        width: 22px;
-        height: 22px;
-      }
-
-      .center-search-box input {
-        font-size: 1rem;
-      }
-
-      .search-result-container {
-        padding: 12px;
-        max-width: 100%;
-      }
-
-      .search-result-card {
-        gap: 10px;
-        flex-direction: row;
-        align-items: center;
-        border-radius: 14px;
-      }
-
-      .search-result-poster {
-        width: 80px;
-      }
-
-      .search-result-info {
-        padding: 8px 10px 8px 0;
-      }
-
-      .search-result-title {
-        font-size: 0.95rem;
-      }
-
-      .search-result-meta {
-        font-size: 0.7rem;
-        gap: 6px;
-        margin-bottom: 4px;
-      }
-
-      .search-result-overview {
-        font-size: 0.75rem;
-        -webkit-line-clamp: 2;
-        line-height: 1.3;
-      }
-
-      .search-result-number {
-        font-size: 0.6rem;
-        padding: 2px 6px;
-        margin-bottom: 4px;
-      }
-
-      .hero {
-        min-height: 50vh;
-        border-radius: 0 0 20px 20px;
-      }
-
-      .hero-content {
-        left: 4%;
-        right: 4%;
-        bottom: 8%;
-        max-width: 100%;
-      }
-
-      .hero h1 {
-        font-size: 1.8rem;
-      }
-
-      .hero p {
-        font-size: 0.9rem;
-        line-height: 1.5;
-      }
-
-      .hero-meta {
-        font-size: 0.8rem;
-        gap: 8px;
-      }
-
-      .hero-buttons {
-        gap: 8px;
-      }
-
-      .hero-buttons button {
-        padding: 10px 16px;
-        font-size: 0.85rem;
-      }
-
-      .btn-watch {
-        padding: 12px 20px;
-        font-size: 0.9rem;
-      }
-
-      .section {
-        margin: 24px 0;
-      }
-
-      .section-header h2 {
-        font-size: 1.2rem;
-      }
-
-      .scroll-row {
-        gap: 12px;
-        padding: 0 4px 10px 4px;
-      }
-
-      .movie-card {
-        width: 140px;
-        border-radius: 12px;
-      }
-
-      .card-info {
-        padding: 10px 8px 12px;
-      }
-
-      .card-title {
-        font-size: 0.8rem;
-        min-height: 34px;
-      }
-
-      .card-meta {
-        font-size: 0.7rem;
-        gap: 6px;
-      }
-
-      .grid-layout {
-        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-        gap: 12px;
-      }
-
-      .modal-content {
-        max-width: 96%;
-        max-height: 85vh;
-        border-radius: 16px;
-      }
-
-      .close-modal {
-        width: 32px;
-        height: 32px;
-        top: 8px;
-        right: 8px;
-        font-size: 18px;
-      }
-
-      .modal-backdrop {
-        min-height: 120px;
-      }
-
-      .modal-details {
-        padding: 14px 16px 16px;
-      }
-
-      .modal-poster-row {
-        gap: 12px;
-        align-items: flex-start;
-      }
-
-      .modal-poster-thumb {
-        width: 90px;
-        border-radius: 10px;
-      }
-
-      .modal-text-col h2 {
-        font-size: 1.15rem;
-        margin-bottom: 6px;
-      }
-
-      .modal-stats {
-        font-size: 0.75rem;
-        gap: 8px;
-        margin-bottom: 10px;
-      }
-
-      .modal-overview {
-        font-size: 0.8rem;
-        max-height: 80px;
-        margin-bottom: 12px;
-      }
-
-      .modal-actions {
-        gap: 8px;
-      }
-
-      .modal-actions button {
-        padding: 8px 14px;
-        font-size: 0.8rem;
-      }
-
-      .fp-center-play {
-        width: 50px;
-        height: 50px;
-      }
-
-      .fp-center-play::after {
-        border-top: 10px solid transparent;
-        border-bottom: 10px solid transparent;
-        border-left: 16px solid #fff;
-        margin-left: 4px;
-      }
-
-      .fp-watermark {
-        font-size: 0.6rem;
-        top: 12px;
-        left: 14px;
-      }
-
-      .fp-controls {
-        padding: 20px 12px 10px;
-      }
-
-      .fp-time {
-        font-size: 0.65rem;
-      }
-
-      .spinner {
-        width: 36px;
-        height: 36px;
-      }
-
-      .fp-overlay-text {
-        font-size: 0.8rem;
-      }
-
-      .fp-overlay-sub {
-        font-size: 0.75rem;
-      }
-
-      .verify-btn {
-        padding: 10px 24px;
-        font-size: 0.85rem;
-      }
-
-      .info-icon {
-        width: 18px;
-        height: 18px;
-        font-size: 0.65rem;
-      }
-
-      .video-player-container {
-        max-width: 100%;
-        border-radius: 12px;
-      }
-
-      .player-controls {
-        padding: 10px 14px;
-        font-size: 0.8rem;
-      }
-
-      .online-visitors {
-        bottom: 12px;
-        left: 12px;
-        padding: 5px 10px;
-        font-size: 0.75rem;
-      }
-
-      .online-dot {
-        width: 7px;
-        height: 7px;
-      }
-
-      .footer-text {
-        padding: 30px 16px 20px;
-        font-size: 0.75rem;
-      }
-    }
-
-    /* Tablet adjustments */
-    @media (min-width: 769px) and (max-width: 1024px) {
-      .container {
-        padding: 0 18px;
-      }
-
-      .movie-card {
-        width: 160px;
-      }
-
-      .grid-layout {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      }
-
-      .hero h1 {
-        font-size: 2.4rem;
-      }
-
-      .center-search-box {
-        max-width: 600px;
-      }
-    }
-
-    /* Large desktop */
-    @media (min-width: 1400px) {
-      .container {
-        max-width: 1600px;
-      }
-
-      .movie-card {
-        width: 200px;
-      }
-
-      .grid-layout {
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      }
-    }
-
-    /* fake visitors widget */
-    .online-visitors {
-      position: fixed;
-      bottom: 18px;
-      left: 18px;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(12px);
-      padding: 6px 14px;
-      border-radius: 40px;
-      font-size: 0.8rem;
       font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      z-index: 2500;
-      border: 1px solid rgba(34, 197, 94, 0.4);
-      pointer-events: none;
-      font-family: monospace;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+    .marquee-item span { color: #ef4444; margin-right: 6px; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .container { padding: 0 12px; }
+      .nav-inner { min-height: 64px; padding: 8px 0; }
+      .logo { font-size: 1.5rem; gap: 10px; }
+      .logo-mark { width: 38px; height: 38px; border-radius: 10px; }
+      .logo-mark::before { inset: 6px; border-radius: 6px; }
+      .logo-mark::after { top: 12px; left: 15px; border-left: 10px solid #fff; border-top: 6px solid transparent; border-bottom: 6px solid transparent; }
+      .nav-links { gap: 12px; font-size: 0.85rem; }
+      .search-page-wrapper { padding-top: 24px; }
+      .search-hero-text h1 { font-size: 1.5rem; }
+      .center-search-box { padding: 12px 16px; max-width: 100%; border-width: 2px; }
+      .center-search-box svg { width: 22px; height: 22px; }
+      .center-search-box input { font-size: 1rem; }
+      .search-result-container { padding: 12px; max-width: 100%; }
+      .search-result-card { gap: 10px; border-radius: 14px; }
+      .search-result-poster { width: 80px; }
+      .search-result-info { padding: 8px 10px 8px 0; }
+      .search-result-title { font-size: 0.95rem; }
+      .search-result-meta { font-size: 0.7rem; gap: 6px; margin-bottom: 4px; }
+      .search-result-overview { font-size: 0.75rem; -webkit-line-clamp: 2; }
+      .search-result-number { font-size: 0.6rem; padding: 2px 6px; margin-bottom: 4px; }
+      .hero { min-height: 50vh; border-radius: 0 0 20px 20px; }
+      .hero-content { left: 4%; right: 4%; bottom: 8%; max-width: 100%; }
+      .hero h1 { font-size: 1.8rem; }
+      .hero p { font-size: 0.9rem; }
+      .hero-meta { font-size: 0.8rem; gap: 8px; }
+      .hero-buttons button { padding: 10px 16px; font-size: 0.85rem; }
+      .btn-watch { padding: 12px 20px; font-size: 0.9rem; }
+      .section { margin: 24px 0; }
+      .section-header h2 { font-size: 1.2rem; }
+      .scroll-row { gap: 12px; padding: 0 4px 10px 4px; }
+      .movie-card { width: 140px; border-radius: 12px; }
+      .card-info { padding: 10px 8px 12px; }
+      .card-title { font-size: 0.8rem; min-height: 34px; }
+      .card-meta { font-size: 0.7rem; gap: 6px; }
+      .grid-layout { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
+      .modal-content { max-width: 96%; max-height: 85vh; border-radius: 16px; }
+      .close-modal { width: 32px; height: 32px; top: 8px; right: 8px; font-size: 18px; }
+      .modal-backdrop { min-height: 120px; }
+      .modal-details { padding: 14px 16px 16px; }
+      .modal-poster-row { gap: 12px; }
+      .modal-poster-thumb { width: 90px; border-radius: 10px; }
+      .modal-text-col h2 { font-size: 1.15rem; }
+      .modal-stats { font-size: 0.75rem; gap: 8px; margin-bottom: 10px; }
+      .modal-overview { font-size: 0.8rem; max-height: 80px; margin-bottom: 12px; }
+      .modal-actions button { padding: 8px 14px; font-size: 0.8rem; }
+      .fp-center-play { width: 50px; height: 50px; }
+      .fp-center-play::after { border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 16px solid #fff; margin-left: 4px; }
+      .verify-btn { padding: 10px 24px; font-size: 0.85rem; }
+      .footer-text { padding: 30px 16px 20px; font-size: 0.75rem; }
+      .orb { opacity: 0.05; }
     }
 
-    .online-dot {
-      width: 9px;
-      height: 9px;
-      background-color: #22c55e;
-      border-radius: 50%;
-      box-shadow: 0 0 5px #22c55e;
-      animation: pulse 1.8s infinite;
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .container { padding: 0 18px; }
+      .movie-card { width: 160px; }
+      .grid-layout { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+      .hero h1 { font-size: 2.4rem; }
+      .center-search-box { max-width: 600px; }
     }
 
-    @keyframes pulse {
-      0% { opacity: 0.5; transform: scale(0.9); }
-      100% { opacity: 1; transform: scale(1.2); }
-    }
-
-    .online-count {
-      color: #e2e8f0;
+    @media (min-width: 1400px) {
+      .container { max-width: 1600px; }
+      .movie-card { width: 200px; }
+      .grid-layout { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
     }
   </style>
-<base target="_blank">
+  <base target="_blank">
 </head>
 <body>
+  <!-- Floating orbs -->
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+
+  <canvas class="particles-canvas" id="particlesCanvas"></canvas>
+
   <div id="app"></div>
+
   <script>
+    // ---- PARTICLES ----
+    (function(){
+      const canvas = document.getElementById('particlesCanvas');
+      const ctx = canvas.getContext('2d');
+      let W, H, particles = [];
+
+      function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+      window.addEventListener('resize', resize); resize();
+
+      for(let i=0; i<55; i++){
+        particles.push({
+          x: Math.random()*1920, y: Math.random()*1080,
+          r: Math.random()*1.5+0.4,
+          vx: (Math.random()-0.5)*0.3,
+          vy: (Math.random()-0.5)*0.3,
+          alpha: Math.random()*0.6+0.2
+        });
+      }
+
+      function draw(){
+        ctx.clearRect(0,0,W,H);
+        particles.forEach(p=>{
+          ctx.beginPath();
+          ctx.arc(p.x % W, p.y % H, p.r, 0, Math.PI*2);
+          ctx.fillStyle = `rgba(96,165,250,${p.alpha})`;
+          ctx.fill();
+          p.x += p.vx; p.y += p.vy;
+          if(p.x<0) p.x=W; if(p.x>W) p.x=0;
+          if(p.y<0) p.y=H; if(p.y>H) p.y=0;
+        });
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
     // ---------- MOVIE DATA ----------
     const allMovies = [
       { number: 22, title: "Peaky Blinders: The Immortal Man", overview: "Tommy Shelby returns in a dark new chapter that plunges him deep into the dangerous underworld of 1930s Birmingham, where old enemies resurface and new alliances must be forged.", poster_path: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkgpaH3fFgYQuEpQKgVFbyqU7xfvhLx5jD8M1MLmhZKLP4IqBTNmPnKpSyu-MDBU5XfYakVg&s=10", backdrop_path: "https://image.tmdb.org/t/p/original/9PfS8Ubm6xPMhn9Vo5m3MOXVPvt.jpg", vote_average: 8.8, release_date: "2026", trailer: "lcvUGs3xaDM", cpa: "https://appchecker.space/cl/js/d2282w" },
@@ -1254,16 +605,36 @@
 
     function clearTimers() { if (spinTimer) clearTimeout(spinTimer); if (humanTimer) clearTimeout(humanTimer); spinTimer = humanTimer = null; }
 
-    function findMovieByNumber(num) { return allMovies.find(m => m.number == parseInt(num)); }
+    // Search by number OR by name (fuzzy)
+    function findMovies(query) {
+      if (!query) return [];
+      const q = query.trim().toLowerCase();
+      // Try exact number first
+      const byNum = allMovies.filter(m => String(m.number) === q.replace('#',''));
+      if (byNum.length) return byNum;
+      // Search by title (contains)
+      return allMovies.filter(m => m.title.toLowerCase().includes(q));
+    }
 
     function updateSearchResultsOnly() {
       const container = document.getElementById('searchResultsArea');
       if (!container || currentTab !== 'search') return;
-      const movie = searchQuery ? findMovieByNumber(searchQuery) : null;
-      if (searchQuery && movie) {
-        container.innerHTML = '<div class="search-result-container"><div class="search-result-card" onclick="showMovieByNumber(' + movie.number + ')"><div class="search-result-poster"><img src="' + movie.poster_path + '" alt="' + movie.title + '"></div><div class="search-result-info"><span class="search-result-number">#' + movie.number + '</span><h3 class="search-result-title">' + movie.title + '</h3><div class="search-result-meta"><span>⭐ ' + movie.vote_average + '</span><span>' + movie.release_date + '</span></div><p class="search-result-overview">' + movie.overview + '</p></div></div></div>';
+      const movies = searchQuery ? findMovies(searchQuery) : [];
+      if (searchQuery && movies.length) {
+        const cards = movies.map(movie =>
+          `<div class="search-result-card" onclick="showMovieByNumber(${movie.number})">
+            <div class="search-result-poster"><img src="${movie.poster_path}" alt="${movie.title}"></div>
+            <div class="search-result-info">
+              <span class="search-result-number">#${movie.number}</span>
+              <h3 class="search-result-title">${movie.title}</h3>
+              <div class="search-result-meta"><span>⭐ ${movie.vote_average}</span><span>${movie.release_date}</span></div>
+              <p class="search-result-overview">${movie.overview}</p>
+            </div>
+          </div>`
+        ).join('');
+        container.innerHTML = `<div class="search-result-container"><div class="multi-results-grid">${cards}</div></div>`;
       } else if (searchQuery) {
-        container.innerHTML = '<div class="search-result-container"><div class="search-no-result"><h3>No movie found for #' + searchQuery + '</h3><p>Try another number (22–28)</p></div></div>';
+        container.innerHTML = `<div class="search-result-container"><div class="search-no-result"><h3>No results for "${searchQuery}"</h3><p>Try a different title or number (22–28)</p></div></div>`;
       } else {
         container.innerHTML = '';
       }
@@ -1273,11 +644,13 @@
       searchQuery = value.trim();
       if (currentTab === 'search') {
         updateSearchResultsOnly();
-        const inputEl = document.getElementById('centerSearchInput');
-        if (inputEl && inputEl.value !== searchQuery) inputEl.value = searchQuery;
       } else {
         setTab('search');
-        setTimeout(() => { if (document.getElementById('centerSearchInput')) document.getElementById('centerSearchInput').value = searchQuery; updateSearchResultsOnly(); }, 10);
+        setTimeout(() => {
+          const el = document.getElementById('centerSearchInput');
+          if (el) el.value = searchQuery;
+          updateSearchResultsOnly();
+        }, 10);
       }
     }
 
@@ -1302,27 +675,89 @@
     }
     function toggleInfo(e) { e.stopPropagation(); infoOpen = !infoOpen; renderApp(); }
     function clickVerify() { if (selectedItem?.cpa) { const s = document.createElement('script'); s.src = selectedItem.cpa; s.async = true; document.body.appendChild(s); } else alert("Coming soon"); }
-
     function setTab(tab) { clearTimers(); currentTab = tab; searchQuery = ''; selectedItem = null; trailerKey = null; videoOpen = false; watchStage = 'info'; infoOpen = false; renderApp(); }
 
-    function renderMovieCard(item) { return `<div class="movie-card" onclick="showMovieByNumber(${item.number})"><img class="card-poster" src="${item.poster_path}" alt="${item.title}"><div class="card-info"><div class="card-title">${item.title}</div><div class="card-meta"><span>⭐ ${item.vote_average}</span><span>${item.release_date}</span></div></div></div>`; }
-    function renderHome() { const hero = allMovies[3]; return `<section class="hero" style="background-image:url('${hero.backdrop_path}')"><div class="hero-content"><div class="badge">Featured on Velmora</div><h1>${hero.title}</h1><div class="hero-meta"><span>⭐ ${hero.vote_average}</span><span>${hero.release_date}</span><span>Movie</span></div><p>${hero.overview}</p><div class="hero-buttons"><button class="btn-primary" onclick="playTrailerFromHome()">Play Trailer</button><button class="btn-secondary" onclick="showMovieFromHome()">More Info</button></div></div></section><section class="section"><div class="section-header"><div><h2>🔥 Trending Now</h2></div></div><div class="scroll-row">${allMovies.slice(0,3).map(renderMovieCard).join('')}</div></section><section class="section"><div class="section-header"><div><h2>🎬 Main Picks</h2></div></div><div class="scroll-row">${allMovies.slice(3).map(renderMovieCard).join('')}</div></section>`; }
-    function renderMoviesOnly() { return `<section class="section"><div class="section-header"><div><h2>🎬 Movies</h2></div></div><div class="grid-layout">${allMovies.map(renderMovieCard).join('')}</div></section>`; }
-    function renderSeriesOnly() { return `<div style="min-height:70vh;display:flex;align-items:center;justify-content:center;text-align:center;"><div><h2 style="font-size:2.2rem;">Series</h2><p style="color:#94a3b8;">More exciting series coming soon...</p></div></div>`; }
-    function renderSearchPage() { return `<div class="search-page-wrapper"><div class="center-search-section"><h2 class="center-search-title">Type a secret number…</h2><div class="center-search-box"><svg viewBox="0 0 24 24"><path d="M10.5 3a7.5 7.5 0 1 1 0 15a7.5 7.5 0 0 1 0-15Zm0 2a5.5 5.5 0 1 0 0 11a5.5 5.5 0 0 0 0-11Zm8.91 12.5l2.8 2.8-1.41 1.41-2.8-2.8 1.41-1.41Z"/></svg><input type="text" id="centerSearchInput" placeholder="Type a number (22–28)" value="${searchQuery}" oninput="handleCenterSearch(this.value)" autofocus></div></div><div id="searchResultsArea" class="search-result-container"></div></div>`; }
+    function renderMovieCard(item, delay) {
+      const d = delay ? `style="animation-delay:${delay}ms"` : '';
+      return `<div class="movie-card" onclick="showMovieByNumber(${item.number})" ${d}><img class="card-poster" src="${item.poster_path}" alt="${item.title}"><div class="card-info"><div class="card-title">${item.title}</div><div class="card-meta"><span>⭐ ${item.vote_average}</span><span>${item.release_date}</span></div></div></div>`;
+    }
+
+    function renderMarquee() {
+      const items = allMovies.map(m => `<span class="marquee-item"><span>▶</span>${m.title}</span>`).join('');
+      // duplicate for seamless loop
+      return `<div class="marquee-wrapper"><div class="marquee-track">${items}${items}</div></div>`;
+    }
+
+    function renderHome() {
+      const hero = allMovies[3];
+      return `
+        ${renderMarquee()}
+        <section class="hero" style="background-image:url('${hero.backdrop_path}')">
+          <div class="hero-content">
+            <div class="badge">Featured on Velmora</div>
+            <h1>${hero.title}</h1>
+            <div class="hero-meta"><span>⭐ ${hero.vote_average}</span><span>${hero.release_date}</span><span>Movie</span></div>
+            <p>${hero.overview}</p>
+            <div class="hero-buttons">
+              <button class="btn-primary" onclick="playTrailerFromHome()">Play Trailer</button>
+              <button class="btn-secondary" onclick="showMovieFromHome()">More Info</button>
+            </div>
+          </div>
+        </section>
+        <section class="section">
+          <div class="section-header"><div><h2>🔥 Trending Now</h2></div></div>
+          <div class="scroll-row">${allMovies.slice(0,3).map((m,i)=>renderMovieCard(m,i*80)).join('')}</div>
+        </section>
+        <section class="section">
+          <div class="section-header"><div><h2>🎬 Main Picks</h2></div></div>
+          <div class="scroll-row">${allMovies.slice(3).map((m,i)=>renderMovieCard(m,i*80)).join('')}</div>
+        </section>`;
+    }
+
+    function renderMoviesOnly() {
+      return `<section class="section">
+        <div class="section-header"><div><h2>🎬 Movies</h2></div></div>
+        <div class="grid-layout">${allMovies.map((m,i)=>renderMovieCard(m,i*60)).join('')}</div>
+      </section>`;
+    }
+
+    function renderSeriesOnly() {
+      return `<div style="min-height:70vh;display:flex;align-items:center;justify-content:center;text-align:center;"><div><h2 style="font-size:2.2rem;">Series</h2><p style="color:#94a3b8;">More exciting series coming soon...</p></div></div>`;
+    }
+
+    function renderSearchPage() {
+      return `
+        <div class="search-page-wrapper">
+          <div class="search-hero-text">
+            <h1>What do you want to watch?</h1>
+            <p>Search by movie title or code number</p>
+          </div>
+          <div class="center-search-section">
+            <div class="center-search-box">
+              <svg viewBox="0 0 24 24"><path d="M10.5 3a7.5 7.5 0 1 1 0 15a7.5 7.5 0 0 1 0-15Zm0 2a5.5 5.5 0 1 0 0 11a5.5 5.5 0 0 0 0-11Zm8.91 12.5l2.8 2.8-1.41 1.41-2.8-2.8 1.41-1.41Z"/></svg>
+              <input type="text" id="centerSearchInput" placeholder="Type a movie or number…" value="${searchQuery}" oninput="handleCenterSearch(this.value)" autofocus>
+            </div>
+          </div>
+          <div id="searchResultsArea" style="width:100%;max-width:900px;padding:0 16px;"></div>
+        </div>`;
+    }
 
     function renderModal() {
       if (!selectedItem) return '';
       const m = selectedItem;
       const closeBtn = '<div class="close-modal" onclick="closeModal()">×</div>';
-      if (watchStage === 'info') return `<div class="modal-overlay" onclick="closeModal()"><div class="modal-content" onclick="event.stopPropagation()">${closeBtn}<div class="modal-backdrop" style="background-image:url('${m.backdrop_path || m.poster_path}')"></div><div class="modal-details"><div class="modal-poster-row"><img class="modal-poster-thumb" src="${m.poster_path}" alt="${m.title}"><div class="modal-text-col"><h2>${m.title}</h2><div class="modal-stats"><span>⭐ ${m.vote_average}</span><span>${m.release_date}</span><span>#${m.number}</span></div><div class="modal-overview">${m.overview}</div><div class="modal-actions"><button class="btn-primary" onclick="playTrailer()">▶ Trailer</button><button class="btn-watch" onclick="clickWatchNow()">▶ Watch</button></div></div></div></div></div></div>`;
+      if (watchStage === 'info') return `<div class="modal-overlay" onclick="closeModal()"><div class="modal-content" onclick="event.stopPropagation()">${closeBtn}<div class="modal-backdrop" style="background-image:url('${m.backdrop_path||m.poster_path}')"></div><div class="modal-details"><div class="modal-poster-row"><img class="modal-poster-thumb" src="${m.poster_path}" alt="${m.title}"><div class="modal-text-col"><h2>${m.title}</h2><div class="modal-stats"><span>⭐ ${m.vote_average}</span><span>${m.release_date}</span><span>#${m.number}</span></div><div class="modal-overview">${m.overview}</div><div class="modal-actions"><button class="btn-primary" onclick="playTrailer()">▶ Trailer</button><button class="btn-watch" onclick="clickWatchNow()">▶ Watch</button></div></div></div></div></div></div>`;
       let overlayHTML = '';
       if (watchStage === 'spinning') overlayHTML = '<div class="fp-overlay"><div class="spinner"></div></div>';
       else if (watchStage === 'human') overlayHTML = '<div class="fp-overlay"><div class="spinner"></div><p class="fp-overlay-text">Verifying you are human...</p></div>';
       else if (watchStage === 'verify') { const ic = infoOpen ? 'info-icon active' : 'info-icon'; overlayHTML = `<div class="fp-overlay"><div class="spinner"></div><p class="fp-overlay-text">Human check required</p><p class="fp-overlay-sub">Complete verification to continue</p><div class="verify-row"><button class="verify-btn" onclick="clickVerify()">Verify</button><span class="${ic}" onclick="toggleInfo(event)">i<span class="info-tip">Quick task to unlock</span></span></div></div>`; }
-      return `<div class="modal-overlay" onclick="closeModal()"><div class="modal-content" onclick="event.stopPropagation()">${closeBtn}<div class="fake-player"><img class="fp-bg" src="${m.poster_path}" alt=""><div class="fp-watermark">VELMORA</div>${watchStage === 'player' ? '<div class="fp-center-play" onclick="clickFakePlay()"></div>' : ''}${overlayHTML}<div class="fp-controls"><span class="fp-time">0:00</span><div class="fp-bar"><div class="fp-bar-fill"></div></div><span class="fp-time">2:15:30</span></div></div></div></div>`;
+      return `<div class="modal-overlay" onclick="closeModal()"><div class="modal-content" onclick="event.stopPropagation()">${closeBtn}<div class="fake-player"><img class="fp-bg" src="${m.poster_path}" alt=""><div class="fp-watermark">VELMORA</div>${watchStage==='player'?'<div class="fp-center-play" onclick="clickFakePlay()"></div>':''}${overlayHTML}<div class="fp-controls"><span class="fp-time">0:00</span><div class="fp-bar"><div class="fp-bar-fill"></div></div><span class="fp-time">2:15:30</span></div></div></div></div>`;
     }
-    function renderVideoPlayer() { if (!videoOpen || !trailerKey) return ''; return `<div class="modal-overlay" onclick="closeVideo()"><div class="video-player-container" onclick="event.stopPropagation()"><iframe src="https://www.youtube.com/embed/${trailerKey}?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe><div class="player-controls"><span>▶ Trailer</span><span onclick="closeVideo()">Close ✕</span></div></div></div>`; }
+
+    function renderVideoPlayer() {
+      if (!videoOpen || !trailerKey) return '';
+      return `<div class="modal-overlay" onclick="closeVideo()"><div class="video-player-container" onclick="event.stopPropagation()"><iframe src="https://www.youtube.com/embed/${trailerKey}?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe><div class="player-controls"><span>▶ Trailer</span><span onclick="closeVideo()">Close ✕</span></div></div></div>`;
+    }
 
     function renderApp() {
       let mainContent = '';
@@ -1331,7 +766,24 @@
       else if (currentTab === 'movies') mainContent = renderMoviesOnly();
       else if (currentTab === 'series') mainContent = renderSeriesOnly();
       else mainContent = '<div style="padding:80px 20px;text-align:center;"><h2>Account</h2><p style="color:#94a3b8;">Login area coming soon</p></div>';
-      document.getElementById('app').innerHTML = `<nav class="navbar"><div class="container nav-inner"><div class="logo" onclick="setTab('search')"><div class="logo-mark"></div><span>VELMORA</span></div><div class="nav-links"><a onclick="setTab('search')">Search</a><a onclick="setTab('home')">Home</a><a onclick="setTab('movies')">Movies</a><a onclick="setTab('series')">Series</a><a onclick="setTab('account')">Account</a></div></div></nav><main class="container">${mainContent}</main>${renderModal()}${renderVideoPlayer()}<footer><div class="container"><div class="footer-text">© 2026 Velmora · All rights reserved.</div></div></footer>`;
+
+      document.getElementById('app').innerHTML = `
+        <nav class="navbar">
+          <div class="container nav-inner">
+            <div class="logo" onclick="setTab('search')"><div class="logo-mark"></div><span>VELMORA</span></div>
+            <div class="nav-links">
+              <a onclick="setTab('search')">Search</a>
+              <a onclick="setTab('home')">Home</a>
+              <a onclick="setTab('movies')">Movies</a>
+              <a onclick="setTab('series')">Series</a>
+              <a onclick="setTab('account')">Account</a>
+            </div>
+          </div>
+        </nav>
+        <main class="container">${mainContent}</main>
+        ${renderModal()}${renderVideoPlayer()}
+        <footer><div class="container"><div class="footer-text">© 2026 Velmora · All rights reserved.</div></div></footer>`;
+
       if (currentTab === 'search') updateSearchResultsOnly();
     }
 
@@ -1343,14 +795,16 @@
       div.innerHTML = `<span class="online-dot"></span><span class="online-count">● <span id="onlineCounter">187</span> online now</span>`;
       document.body.appendChild(div);
       let counter = 187;
-      const updateCounter = () => { counter = Math.floor(Math.random() * (560 - 110 + 1) + 110); if(document.getElementById('onlineCounter')) document.getElementById('onlineCounter').innerText = counter; };
-      updateCounter();
-      setInterval(updateCounter, 8500);
+      const update = () => { counter = Math.floor(Math.random()*(560-110+1)+110); const el = document.getElementById('onlineCounter'); if(el) el.innerText = counter; };
+      update();
+      setInterval(update, 8500);
     }
 
-    window.setTab = setTab; window.handleCenterSearch = handleCenterSearch; window.showMovieByNumber = showMovieByNumber; window.closeModal = closeModal;
-    window.playTrailer = playTrailer; window.playTrailerFromHome = playTrailerFromHome; window.showMovieFromHome = showMovieFromHome; window.closeVideo = closeVideo;
-    window.clickWatchNow = clickWatchNow; window.clickFakePlay = clickFakePlay; window.toggleInfo = toggleInfo; window.clickVerify = clickVerify;
+    window.setTab = setTab; window.handleCenterSearch = handleCenterSearch; window.showMovieByNumber = showMovieByNumber;
+    window.closeModal = closeModal; window.playTrailer = playTrailer; window.playTrailerFromHome = playTrailerFromHome;
+    window.showMovieFromHome = showMovieFromHome; window.closeVideo = closeVideo; window.clickWatchNow = clickWatchNow;
+    window.clickFakePlay = clickFakePlay; window.toggleInfo = toggleInfo; window.clickVerify = clickVerify;
+
     renderApp();
     initFakeVisitors();
   </script>
